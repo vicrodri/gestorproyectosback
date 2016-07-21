@@ -1,0 +1,53 @@
+package com.capgemini.gestorproyectos.dao;
+
+import java.util.List;
+
+import com.capgemini.gestorproyectos.model.ClienteDTO;
+
+/**
+ * DAO para las operaciones de BBDD de la tabla Cliente
+ * mapea al fichero ClienteMapper.xml
+ * @author capgemini
+ *
+ */
+public interface ClienteDAO {
+	
+	/**
+	 * Devuelve los registros de la tabla Clientes.
+	 * 
+	 * @param cliente <ClienteDTO>
+	 * @return lista de <Cliente>
+	 */
+	List<ClienteDTO> get(ClienteDTO cliente);
+
+	/**
+	 * Crear un cliente 
+	 * 
+	 * @param cliente <ClienteDTO>
+	 * @return cliente <ClienteDTO> creado
+	 */
+	Long add(ClienteDTO cliente);
+
+	/**
+	 * Actualiza un cliente <ClienteDTO>
+	 * 
+	 * @param cliente <ClienteDTO>
+	 * @return
+	 */
+	Long update(ClienteDTO cliente);
+
+	/**
+	 * elimina un cliente <ClienteDTO>
+	 * 
+	 * @param cliente <ClienteDTO>
+	 * @return
+	 */
+	Long delete(ClienteDTO cliente);
+
+	/**
+	 * Devuelve todos los registros de la tabla Cliente.
+	 * 
+	 * @return lista de <Cliente>
+	 */
+	List<ClienteDTO> getAllClientes();
+}

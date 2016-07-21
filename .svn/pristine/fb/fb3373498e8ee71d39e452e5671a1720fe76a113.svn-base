@@ -1,0 +1,113 @@
+package com.capgemini.gestorproyectos.controller;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.capgemini.gestorproyectos.model.PersonaDTO;
+import com.capgemini.gestorproyectos.service.PersonaService;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+
+@Api(value = "PersonaController", description = "PersonaController DESC") 
+@Controller
+@RequestMapping("/rest/persona")
+public class PersonaController extends BaseController{
+	
+	private Logger logger = LoggerFactory.getLogger(PersonaController.class);
+	
+	@Autowired
+	private PersonaService service;
+	
+	@ApiOperation(
+		value = "obtenerPersonas", 
+		notes="Devuelve una lista de Personas en función del filtro pasado como parámetro",
+		responseClass="List<PersonaDTO>")
+	@RequestMapping(value="/obtenerPersonas", method = RequestMethod.POST)
+	public @ApiResponse(value="Lista de personas con los resultados") 
+		ResponseEntity<List<PersonaDTO>> obtenerPersonas(
+		@ApiParam(value = "Objeto Persona con el filtro a aplicar") 
+		@RequestBody PersonaDTO persona)  throws Exception{
+		logger.info("[INICIO] - obtenerPersonas");
+		
+		ResponseEntity<List<PersonaDTO>> response;
+		List<PersonaDTO> lista = null;
+		lista = service.getPersonas(persona);
+		response = new ResponseEntity<List<PersonaDTO>>(lista, HttpStatus.OK);
+
+		logger.info("[FIN] - obtenerPersonas");
+		
+		return response;
+	}
+	    
+	@ApiOperation(
+		value = "crearPersona", 
+		notes="Añade los datos de una persona en BBDD",
+		responseClass="Persona añadida")
+	@RequestMapping(value="/crearPersona", method = RequestMethod.POST)
+	public @ApiResponse(value="Persona Añadida")
+		ResponseEntity<PersonaDTO> crearPersona(
+			@ApiParam(value = "Objeto Persona a añadir - nombre, apellidos y fecha de entrada obligatorios") 
+			@Valid @RequestBody PersonaDTO persona)  throws Exception{
+		logger.info("[INICIO] - crearPersona");
+		
+		ResponseEntity<PersonaDTO> response;
+		PersonaDTO resultado = service.addPersona(persona);
+		response = new ResponseEntity<PersonaDTO>(resultado, HttpStatus.CREATED);
+
+		logger.info("[FIN] - crearPersona");
+		
+		return response;
+	}
+	
+	@ApiOperation(
+		value = "actualizarPersona", 
+		notes="Actualiza los datos de una persona en BBDD",
+		responseClass="datos actualizados")
+	@RequestMapping(value="/actualizarPersona", method = RequestMethod.PUT)
+	public  @ApiResponse(value="Persona Actualizada") 
+		ResponseEntity<PersonaDTO> actualizarPersona(
+			@ApiParam(value = "Objeto Persona a añadir - nombre, apellidos y fecha de entrada obligatorios") 
+			@Valid @RequestBody PersonaDTO persona)  throws Exception{
+		logger.info("[INICIO] - actualizarPersona");
+		
+		ResponseEntity<PersonaDTO> response;
+		PersonaDTO resultado = service.updatePersona(persona);
+		response = new ResponseEntity<PersonaDTO>(resultado, HttpStatus.CREATED);
+
+		logger.info("[FIN] - actualizarPersona");
+		
+		return response;
+	}
+	
+	@ApiOperation(
+		value = "getPersonasActivas", 
+		notes="Devuelve una lista de Personas activas",
+		responseClass="List<PersonaDTO>")
+	@RequestMapping(value="/getPersonasActivas", method = RequestMethod.GET)
+	public @ApiResponse(value="Lista de proyectos con los resultados") 
+		ResponseEntity<List<PersonaDTO>> getPersonasActivas()  throws Exception{
+		logger.info("[INICIO] - getPersonasActivas");
+		
+		ResponseEntity<List<PersonaDTO>> response;
+		List<PersonaDTO> lista = service.getPersonasActivas();
+		response = new ResponseEntity<List<PersonaDTO>>(lista, HttpStatus.OK);
+
+		logger.info("[FIN] - getPersonasActivas");
+		
+		return response;
+	}
+	
+}

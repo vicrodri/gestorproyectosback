@@ -1,0 +1,73 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.capgemini.gestorproyectos.dao.ClienteDAO">
+  
+	<resultMap type="com.capgemini.gestorproyectos.model.ClienteDTO" id="clienteMap">
+	  <id column="idCliente" property="id" javaType="long"/>
+	  <result column="nombreCliente" property="nombre" javaType="string"/>
+	  <result column="descripcion" property="descripcion" javaType="string"/>
+	  <collection property="arquitecturas" ofType="com.capgemini.gestorproyectos.model.ArquitecturaDTO">
+        <id property="id" column="idArquitectura" />
+        <result property="nombre" column="nombreArquitectura"/>
+    </collection>
+	</resultMap>
+  
+  <resultMap type="com.capgemini.gestorproyectos.model.ClienteDTO" id="clienteComboMap">
+    <id column="idCliente" property="id" javaType="long"/>
+    <result column="nombreCliente" property="nombre" javaType="string"/>
+  </resultMap>
+  
+  <select id="get" resultMap="clienteMap" 
+    parameterType="com.capgemini.gestorproyectos.model.ClienteDTO">
+    <if test="nombre!=null">
+      <bind name="patronNombre" value="'%' + _parameter.getNombre() + '%'" />
+    </if>
+    select cli.idCliente as idCliente, cli.nombre as nombreCliente, 
+    cli.descripcion, arq.idArquitectura, arq.nombre as nombreArquitectura 
+    from clientes cli left join arquitecturas arq 
+    on cli.idCliente = arq.idCliente
+    <where>
+      <choose>
+        <when test="id!=null">
+          and cli.idCliente = #{id}
+        </when>
+        <when test="nombre!=null">
+          and cli.nombre like #{patronNombre} 
+	      </when>
+	    </choose>
+    </where>
+    order by cli.idCliente
+  </select>
+  
+  <select id="getAllClientes" resultMap="clienteComboMap" >
+    select * from clientes order by idCliente
+  </select>
+  
+  <insert id="add" parameterType="com.capgemini.gestorproyectos.model.ClienteDTO"   
+    useGeneratedKeys="true" keyProperty="id">
+    insert into clientes (
+      nombre,
+      descripcion
+    )
+    values (
+      #{nombre},
+      #{descripcion}
+    )
+  </insert>
+  
+  <update id="update" parameterType="com.capgemini.gestorproyectos.model.ClienteDTO">
+    update clientes set
+      <if test='nombre!=null'>
+        nombre=#{nombre},
+      </if>
+      <if test='descripcion!=null'>
+        descripcion=#{descripcion}
+      </if>
+    where idCliente = #{id}
+  </update>
+  
+  <delete id="delete" parameterType="com.capgemini.gestorproyectos.model.ClienteDTO">
+    delete from clientes where idCliente = #{id}
+  </delete> 
+    
+  
+</mapper>

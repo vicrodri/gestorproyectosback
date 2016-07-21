@@ -1,0 +1,64 @@
+package com.capgemini.gestorproyectos.service;
+
+import java.util.List;
+
+import com.capgemini.gestorproyectos.model.ComplejidadDTO;
+import com.capgemini.gestorproyectos.model.GrupoTareaDTO;
+import com.capgemini.gestorproyectos.model.TamanioDTO;
+
+public interface GrupoTareaService {
+
+	/**
+	 * Recupera una lista de grupoTareas.
+	 * 
+	 * @return lista de <GrupoTareaDTO>
+	 * @throws Exception
+	 */
+	List<GrupoTareaDTO> getGrupoTareas(GrupoTareaDTO grupoTarea) throws Exception;
+	
+	/**
+	 * Crea un registro de tipo <GrupoTareaDTO> en BBDD
+	 * 
+	 * @param grupoTarea <GrupoTareaDTO>
+	 * @return grupoTarea <GrupoTareaDTO> añadido con su ID
+	 * @throws Exception
+	 */
+	GrupoTareaDTO addGrupoTarea(GrupoTareaDTO grupoTarea) throws Exception;
+	
+	/**
+	 * Actualiza un registro de tipo <GrupoTareaDTO> en BBDD
+	 * 
+	 * @param grupoTarea <GrupoTareaDTO>
+	 * @return grupoTarea <GrupoTareaDTO> actualizada
+	 * @throws Exception
+	 */
+	GrupoTareaDTO updateGrupoTarea(GrupoTareaDTO grupoTarea) throws Exception;
+	
+	/**
+	 * Elimina un registro de tipo <GrupoTareaDTO> en BBDD
+	 * 
+	 * @param grupoTarea <GrupoTareaDTO>
+	 * @return 
+	 * @throws Exception
+	 */
+	Boolean deleteGrupoTarea(GrupoTareaDTO grupoTarea) throws Exception;
+	
+	/**
+	 * Devuelve los grupos de tareas asociados a una complejidad pasada por parametro.
+	 * 
+	 * @param complejidad <ComplejidadDTO>
+	 * @return lista de <GrupoTareaDTO>
+	 * @throws Exception
+	 */
+	List<GrupoTareaDTO> getGruposComplejidad(ComplejidadDTO complejidad) throws Exception;
+
+	/**
+	 * Devuelve los grupos de tareas asociados a un tamanio pasado por parametro.
+	 * 
+	 * @param tamanio <TamanioDTO>
+	 * @return lista de <GrupoTareaDTO>
+	 * @throws Exception
+	 */
+	List<GrupoTareaDTO> getGruposTamanio(TamanioDTO tamanio) throws Exception;
+
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.capgemini.gestorproyectos.dao.RolDAO">
+  
+	<resultMap type="com.capgemini.gestorproyectos.model.RolDTO" id="RolMap">
+	  <id column="idRol" property="id" javaType="long"/>
+	  <result column="nombre" property="nombre" javaType="string"/>
+	</resultMap>
+  
+  <select id="get" resultMap="RolMap" 
+    parameterType="com.capgemini.gestorproyectos.model.RolDTO">
+    select * from roles
+    <if test="id!=null"> where idRol=#{id}</if>
+    order by idRol
+  </select>
+  
+  <select id="getAll" resultMap="RolMap">
+    select * from roles
+    order by idRol
+  </select>
+  
+  <insert id="add" parameterType="com.capgemini.gestorproyectos.model.RolDTO"   
+    useGeneratedKeys="true" keyProperty="id">
+    insert into roles (
+      nombre
+    )
+    values (
+      #{nombre}
+    )
+  </insert>
+  
+  <update id="update" parameterType="com.capgemini.gestorproyectos.model.RolDTO">
+    update roles set
+      <if test='nombre!=null'>
+        nombre=#{nombre}
+      </if>
+    where idRol = #{id}
+  </update>
+  
+  <delete id="delete" parameterType="com.capgemini.gestorproyectos.model.RolDTO">
+    delete from roles where idRol = #{id}
+  </delete> 
+    
+</mapper>

@@ -1,0 +1,88 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.capgemini.gestorproyectos.dao.PersonaDAO">
+  
+	<resultMap type="com.capgemini.gestorproyectos.model.PersonaDTO" id="personaMap">
+	  <id column="idPersona" property="id" javaType="long"/>
+	  <result column="nombre" property="nombre" javaType="string"/>
+	  <result column="apellido1" property="primerApellido" javaType="string"/>
+	  <result column="apellido2" property="segundoApellido" javaType="string"/>
+	  <result column="fechaEntrada" property="fechaEntrada" javaType="date"/>
+	  <result column="fechaSalida" property="fechaSalida" javaType="date"/>
+	  <result column="inactivo" property="inactivo" javaType="boolean"/>
+	</resultMap>
+     
+  <select id="get" resultMap="personaMap" 
+    parameterType="com.capgemini.gestorproyectos.model.PersonaDTO">
+    <if test="nombre!=null">
+      <bind name="patronNombre" value="'%' + _parameter.getNombre() + '%'" />
+    </if>
+    <if test="primerApellido!=null">
+      <bind name="patronAp1" value="'%' + _parameter.getPrimerApellido() + '%'" />
+    </if>
+    <if test="segundoApellido!=null">
+      <bind name="patronAp2" value="'%' + _parameter.getSegundoApellido() + '%'" />
+    </if>
+    select * from personas
+    <where>
+      <choose>
+        <when test="id!=null">
+          idPersona = #{id}
+        </when>
+        <when test="nombre!=null or primerApellido!=null or segundoApellido!=null or inactivo!=null">
+          1=1 
+          <if test="nombre!=null">and nombre like #{patronNombre}</if>
+          <if test="primerApellido!=null">and apellido1 like #{patronAp1}</if>
+          <if test="segundoApellido!=null">and apellido2 like #{patronAp2}</if>
+          <if test="inactivo!=null and !inactivo">and inactivo = 0</if>     
+	      </when>
+	    </choose>
+    </where>
+    order by idPersona
+  </select>
+  
+  <select id="getPersonasActivas" resultMap="personaMap" >
+    select * from personas where inactivo=0;
+  </select>
+  
+  <insert id="add" parameterType="com.capgemini.gestorproyectos.model.PersonaDTO"   
+    useGeneratedKeys="true" keyProperty="id">
+    insert into personas (
+      nombre,
+      apellido1,
+      apellido2,
+      fechaEntrada,
+      inactivo
+    )
+    values (
+      #{nombre},
+      #{primerApellido},
+      #{segundoApellido},
+      #{fechaEntrada},
+      0
+    )
+  </insert>
+  
+  <update id="update" parameterType="com.capgemini.gestorproyectos.model.PersonaDTO">
+    update personas set
+      <if test='nombre!=null'>
+        nombre=#{nombre},
+      </if>
+      <if test='primerApellido!=null'>
+        apellido1=#{primerApellido},
+      </if>
+      <if test='segundoApellido!=null'>
+        apellido2=#{segundoApellido},
+      </if>
+      <if test='fechaEntrada!=null'>
+        fechaEntrada=#{fechaEntrada},
+      </if>
+      <if test='fechaSalida!=null'>
+        fechaSalida=#{fehcaSalida},
+      </if>
+      <if test='inactivo!=null'>
+        inactivo=#{inactivo}
+      </if>
+    where idPersona = #{id}
+  </update>
+  
+</mapper>

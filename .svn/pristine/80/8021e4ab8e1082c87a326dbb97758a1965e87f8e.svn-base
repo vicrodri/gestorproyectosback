@@ -1,0 +1,64 @@
+package com.capgemini.gestorproyectos.dao;
+
+import java.util.List;
+
+import com.capgemini.gestorproyectos.model.ArquitecturaDTO;
+import com.capgemini.gestorproyectos.model.ItemDTO;
+import com.capgemini.gestorproyectos.model.TecnologiaDTO;
+
+/**
+ * DAO para las operaciones de BBDD de la tabla Tecnologias
+ * mapea al fichero TecnologiaMapper.xml
+ * @author capgemini
+ *
+ */
+public interface TecnologiaDAO {
+	
+	/**
+	 * Devuelve los registros de la tabla Tecnologias.
+	 * 
+	 * @param tecnologias <TecnologiaDTO>
+	 * @return lista de <TecnologiaDTO>
+	 */
+	List<TecnologiaDTO> get(TecnologiaDTO tecnologia);
+
+	/**
+	 * Crear una tecnologia 
+	 * 
+	 * @param tecnologia <TecnologiaDTO>
+	 * @return tecnologia <TecnologiaDTO> creado
+	 */
+	Long add(TecnologiaDTO tecnologias);
+
+	/**
+	 * Actualiza una tecnologia <TecnologiaDTO>
+	 * 
+	 * @param tecnologia <TecnologiaDTO>
+	 * @return
+	 */
+	Long update(TecnologiaDTO tecnologia);
+
+	/**
+	 * elimina una tecnologia <TecnologiaDTO>
+	 * 
+	 * @param tecnologia <TecnologiaDTO>
+	 * @return
+	 */
+	Long delete(TecnologiaDTO tecnologia);
+
+	/**
+	 * obtiene las tecnologias asociadas a una arquitectura <ArquitecturaDTO>
+	 * 
+	 * @param arquitectura <ArquitecturaDTO>
+	 * @return
+	 */
+	List<TecnologiaDTO> getTecnologiasArquitectura(ArquitecturaDTO arquitectura);
+
+	/**
+	 * obtiene las tecnologias asociadas a un item <ItemDTO>
+	 * 
+	 * @param item <ItemDTO>
+	 * @return
+	 */
+	List<TecnologiaDTO> getTecnologiasItem(ItemDTO item);
+}

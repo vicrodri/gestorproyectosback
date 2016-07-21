@@ -1,0 +1,155 @@
+--SCRIPT DE CREACION DEL ESQUEMA EN MYSQL
+
+CREATE TABLE `clientes` (
+  `idCliente` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Campo autoincremental con el identificador del cliente',
+  `nombre` varchar(45) NOT NULL COMMENT 'nombre del cliente',
+  `descripcion` varchar(200) DEFAULT NULL COMMENT 'descripción del cliente',
+  PRIMARY KEY (`idCliente`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tabla con la información de los clientes para los que vamos a trabajar';
+
+CREATE TABLE `arquitecturas` (
+  `idArquitectura` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Campo autoincremental con el identificador de la arquitectura',
+  `nombre` varchar(45) NOT NULL COMMENT 'Nombre de la arquitectura',
+  `idCliente` int(11) DEFAULT NULL COMMENT 'Identificador del cliente asociado a la arquitectura',
+  PRIMARY KEY (`idArquitectura`),
+  KEY `idCliente_idx` (`idCliente`),
+  CONSTRAINT `arquitecturas_clientes` FOREIGN KEY (`idCliente`) REFERENCES `clientes` (`idCliente`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tabla con la información de las arquitecturas que vamos a gestionar: ARQOS, GAIA....';
+
+CREATE TABLE `tecnologias` (
+  `idTecnologia` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Campo autoincremental con el identificador de la tecnología',
+  `nombre` varchar(45) NOT NULL COMMENT 'Nombre de la tecnología',
+  `lenguaje` varchar(45) NOT NULL COMMENT 'Lenguaje de la tecnología: Java, Javascript, HTML...',
+  `capa` varchar(45) NOT NULL COMMENT 'Capa en la que se utiliza: Frontal, backoffice....',
+  PRIMARY KEY (`idTecnologia`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='Tabla que almacena las tecnologías que se pueden utilizar en una cobertura';
+
+CREATE TABLE `items` (
+  `idItem` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Campo autoincremental con el identificador del tipo de tarea',
+  `nombre` varchar(45) DEFAULT NULL COMMENT 'Nombre del tipo de tarea',
+  `descripción` varchar(200) DEFAULT NULL COMMENT 'Descripción del tipo de tarea',
+  `idArquitectura` int(11) DEFAULT NULL COMMENT 'Identificador de la arquitectura a la que está asociada este tipo de tarea',
+  PRIMARY KEY (`idItem`),
+  KEY `tipos_tareas_arquitecturas_idx` (`idArquitectura`),
+  CONSTRAINT `tipos_tareas_arquitecturas` FOREIGN KEY (`idArquitectura`) REFERENCES `arquitecturas` (`idArquitectura`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tabla que contiene los diferentes tipos de itmes que se pueden realizar (pantallas, negocio, servicios....)';
+
+CREATE TABLE `items_tecnologias` (
+  `idItem` int(11) NOT NULL COMMENT 'Identificador del item',
+  `idTecnologia` int(11) NOT NULL COMMENT 'Identificador de la tecnología',
+  PRIMARY KEY (`idItem`,`idTecnologia`),
+  KEY `items_tecnologias_tecnologia_idx` (`idTecnologia`),
+  CONSTRAINT `items_tecnologias_items` FOREIGN KEY (`idItem`) REFERENCES `items` (`idItem`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `items_tecnologias_tecnologia` FOREIGN KEY (`idTecnologia`) REFERENCES `tecnologias` (`idTecnologia`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tabla que relaciona los tipos de tareas con las tecnologías que involucar cada tipo de tarea';
+
+CREATE TABLE `arquitecturas_tecnologias` (
+  `idArquitectura` int(11) NOT NULL COMMENT 'Identificador de la arquitectura',
+  `idTecnologia` int(11) NOT NULL COMMENT 'Identificador de la tecnologia',
+  PRIMARY KEY (`idArquitectura`,`idTecnologia`),
+  KEY `tecnologias_idx` (`idTecnologia`),
+  CONSTRAINT `arquitecturas` FOREIGN KEY (`idArquitectura`) REFERENCES `arquitecturas` (`idArquitectura`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `tecnologias` FOREIGN KEY (`idTecnologia`) REFERENCES `tecnologias` (`idTecnologia`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tabla que relaciona las arquitecturas con las tecnologías';
+
+CREATE TABLE `complejidades` (
+  `idComplejidad` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Campo autonumérico con el identificador de la complejidad',
+  `descripcion` varchar(45) DEFAULT NULL COMMENT 'Descripcion de la complejidad',
+  PRIMARY KEY (`idComplejidad`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tabla con las posibles complejidades de las tareas que vamos a realizar';
+
+CREATE TABLE `tamanios` (
+  `idTamanio` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Campo autonumérico con el identificador del tamaño',
+  `descripcion` varchar(45) DEFAULT NULL COMMENT 'Descripcion del tamaño',
+  PRIMARY KEY (`idTamanio`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tabla con los posibles tamaños de las tareas que vamos a realizar';
+
+CREATE TABLE `grupo_tareas` (
+  `idGrupoTarea` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Campo autoincremental con el identificador de la definición de la tarea',
+  `idItem` int(11) DEFAULT NULL COMMENT 'Identificador del item',
+  `idComplejidad` int(11) DEFAULT NULL COMMENT 'Identificador de complejidad',
+  `idTamanio` int(11) DEFAULT NULL COMMENT 'Identificador de tamanio',
+  PRIMARY KEY (`idGrupoTarea`),
+  KEY `definicion_item_idx` (`idItem`),
+  KEY `definicion_complejidad_idx` (`idComplejidad`),
+  KEY `definicion_tamanio_idx` (`idTamanio`),
+  CONSTRAINT `definicion_complejidad` FOREIGN KEY (`idComplejidad`) REFERENCES `complejidades` (`idComplejidad`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `definicion_item` FOREIGN KEY (`idItem`) REFERENCES `items` (`idItem`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `definicion_tamanio` FOREIGN KEY (`idTamanio`) REFERENCES `tamanios` (`idTamanio`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tabla con las posibles definiciones de tareas que se pueden realizar';
+
+CREATE TABLE `tareas` (
+  `idTarea` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Campo autonumérico que almacena el identificador del tipo de tarea',
+  `idGrupoTarea` int(11) NOT NULL COMMENT 'Identificador de la definición de la tarea',
+  `nombre` varchar(45) NOT NULL,
+  `horas` int(11) NOT NULL COMMENT 'Horas estimadas de la duración de este tipo de tarea',
+  `comentarios` varchar(200) DEFAULT NULL COMMENT 'Comentarios del tipo de tarea que se quiere hacer',
+  PRIMARY KEY (`idTarea`),
+  KEY `tipo_definicion_tarea_idx` (`idGrupoTarea`),
+  CONSTRAINT `tarea_grupo_tareas` FOREIGN KEY (`idGrupoTarea`) REFERENCES `grupo_tareas` (`idGrupoTarea`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Tabla que almacena los diferentes tipos de tareas que podemos tener';
+
+CREATE TABLE `gestor_proyectos`.`proyectos` (
+  `idProyecto` INT(11) NOT NULL AUTO_INCREMENT COMMENT 'Campo autoincremental con el identificador del proyecto',
+  `idCliente` INT(11) NULL COMMENT 'Identificador del cliente',
+  `nombre` VARCHAR(45) NULL COMMENT 'Nombre del proyecto',
+  `descripcion` VARCHAR(200) NULL COMMENT 'Descripcion larga del proyecto',
+  `fechaInicio` DATETIME NULL COMMENT 'Fecha de inicio del Proyecto',
+  `fechaFin` DATETIME NULL COMMENT 'Fecha de Fin del proyecto',
+  `cerrado` BIT(1) NULL COMMENT '1 - proyecto cerrado, 0 - proyecto abierto',
+  PRIMARY KEY (`idProyecto`),
+  INDEX `FK_PROYECTO_CLIENTE_idx` (`idCliente` ASC),
+  CONSTRAINT `FK_PROYECTO_CLIENTE`
+    FOREIGN KEY (`idCliente`)
+    REFERENCES `gestor_proyectos`.`clientes` (`idCliente`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+COMMENT = 'Tabla con la información de los proyectos con los que vamos a trabajar';
+
+CREATE TABLE `gestor_proyectos`.`personas` (
+  `idPersona` INT(11) NOT NULL AUTO_INCREMENT COMMENT 'Campo autoincremental con el identificador de la persona',
+  `nombre` VARCHAR(45) NULL COMMENT 'Nombre de la persona',
+  `apellido1` VARCHAR(45) NULL COMMENT 'Primer apellido de la persona',
+  `apellido2` VARCHAR(45) NULL COMMENT 'Segundo apellido de la persona',
+  `fechaEntrada` DATETIME NULL COMMENT 'fecha de incorporación de la persona',
+  `fechaSalida` DATETIME NULL COMMENT 'fecha de salida de la persona',
+  `inactivo` BIT(1) NULL COMMENT '1 - inactivo, 0 - ocupado',
+  PRIMARY KEY (`idPersona`)
+)
+COMMENT = 'Tabla con la información de las personas con las que vamos a trabajar';
+
+CREATE TABLE `gestor_proyectos`.`roles` (
+  `idRol` INT(11) NOT NULL AUTO_INCREMENT COMMENT 'Campo autoincremental con el identificador del Rol',
+  `nombre` VARCHAR(45) NULL COMMENT 'Nombre del Rol',
+  PRIMARY KEY (`idRol`)
+)
+COMMENT = 'Tabla con la información de los roles posibles';
+
+CREATE TABLE `gestor_proyectos`.`asignacion` (
+  `idAsignacion` INT(11) NOT NULL AUTO_INCREMENT COMMENT 'Campo autoincremental con el identificador de la asignacion.',
+  `idProyecto` INT(11) NULL COMMENT 'Identificador del proyecto',
+  `idPersona` INT(11) NULL COMMENT 'Identificador de la persona',
+  `idRol` INT(11) NULL COMMENT 'Identificador del rol',
+  `fechaInicio` DATETIME NULL COMMENT 'Fecha de inicio de la asignacion',
+  `fechaFin` DATETIME NULL COMMENT 'Fecha de fin de la asignacion',
+  `inactivo` BIT(1) NULL COMMENT '1 - inactivo, 0 - ocupado',
+  PRIMARY KEY (`idAsignacion`),
+  INDEX `FK_ASIGNACION_PROYECTO_idx` (`idProyecto` ASC),
+  INDEX `FK_ASIGNACION_PERSONA_idx` (`idPersona` ASC),
+  INDEX `FK_ASIGNACION_ROL_idx` (`idRol` ASC),
+  CONSTRAINT `FK_ASIGNACION_PROYECTO`
+    FOREIGN KEY (`idProyecto`)
+    REFERENCES `gestor_proyectos`.`proyectos` (`idProyecto`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_ASIGNACION_PERSONA`
+    FOREIGN KEY (`idPersona`)
+    REFERENCES `gestor_proyectos`.`personas` (`idPersona`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `FK_ASIGNACION_ROL`
+    FOREIGN KEY (`idRol`)
+    REFERENCES `gestor_proyectos`.`roles` (`idRol`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+COMMENT = 'Tabla con la información de a que proyecto esta asignada cada persona y el rol que ocupa.';

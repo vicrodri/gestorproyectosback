@@ -1,0 +1,73 @@
+package com.capgemini.gestorproyectos.service;
+
+import java.util.List;
+
+import com.capgemini.gestorproyectos.model.ArquitecturaDTO;
+import com.capgemini.gestorproyectos.model.ClienteDTO;
+import com.capgemini.gestorproyectos.model.TecnologiaDTO;
+
+public interface ArquitecturaService {
+
+	/**
+	 * Recupera una lista de clientes en funcion del filtro indicado.
+	 * 
+	 * @param arquitectura <ArquitecturaDTO>
+	 * @return lista de <ArquitecturaDTO>
+	 * @throws Exception
+	 */
+	List<ArquitecturaDTO> getArquitecturas(ArquitecturaDTO arquitectura) throws Exception;
+	
+	/**
+	 * Crea un registro de tipo <ArquitecturaDTO> en BBDD
+	 * 
+	 * @param arquitectura <ArquitecturaDTO>
+	 * @return arquitectura <ArquitecturaDTO> añadido con su ID
+	 * @throws Exception
+	 */
+	ArquitecturaDTO addArquitectura(ArquitecturaDTO arquitectura) throws Exception;
+	
+	/**
+	 * Actualiza un registro de tipo <ArquitecturaDTO> en BBDD
+	 * 
+	 * @param arquitectura <ArquitecturaDTO>
+	 * @return 
+	 * @throws Exception
+	 */
+	ArquitecturaDTO updateArquitectura(ArquitecturaDTO arquitectura) throws Exception;
+	
+	/**
+	 * Elimina un registro de tipo <ArquitecturaDTO> en BBDD
+	 * 
+	 * @param arquitectura <ArquitecturaDTO>
+	 * @return 
+	 * @throws Exception
+	 */
+	Boolean deleteArquitectura(ArquitecturaDTO arquitectura) throws Exception;
+
+	/**
+	 * Recupera una lista de arquitecturas para cargar los desplegables.
+	 * 
+	 * @return lista de <ArquitecturaDTO>
+	 * @throws Exception
+	 */
+	List<ArquitecturaDTO> getAll() throws Exception;
+	
+	/**
+	 * Devuelve las arquitecturas asociadas a un cliente pasado por parametro.
+	 * 
+	 * @param cliente <ClienteDTO>
+	 * @return lista de <ArquitecturaDTO>
+	 * @throws Exception
+	 */
+	List<ArquitecturaDTO> getArquitecturasCliente(ClienteDTO cliente) throws Exception;
+
+	/**
+	 * Devuelve las arquitecturas asociadas a una tecnologia pasada por parametro.
+	 * 
+	 * @param cliente <TecnologiaDTO>
+	 * @return lista de <ArquitecturaDTO>
+	 * @throws Exception
+	 */
+	List<ArquitecturaDTO> getArquitecturasTecnologia(TecnologiaDTO tecnologia) throws Exception;
+
+}

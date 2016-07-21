@@ -1,0 +1,64 @@
+package com.capgemini.gestorproyectos.dao;
+
+import java.util.List;
+
+import com.capgemini.gestorproyectos.model.ComplejidadDTO;
+import com.capgemini.gestorproyectos.model.GrupoTareaDTO;
+import com.capgemini.gestorproyectos.model.TamanioDTO;
+
+/**
+ * DAO para las operaciones de BBDD de la tabla grupo_tareas
+ * mapea al fichero GrupoTareaMapper.xml
+ * @author capgemini
+ *
+ */
+public interface GrupoTareaDAO {
+	
+	/**
+	 * Devuelve los registros de la tabla grupo_tareas.
+	 * 
+	 * @param grupoTarea <GrupoTareaDTO>
+	 * @return lista de <GrupoTareaDTO>
+	 */
+	List<GrupoTareaDTO> get(GrupoTareaDTO grupoTarea);
+
+	/**
+	 * Crear un grupoTarea <GrupoTareaDTO>
+	 * 
+	 * @param grupoTarea <GrupoTareaDTO>
+	 * @return grupoTarea <GrupoTareaDTO> creado
+	 */
+	Long add(GrupoTareaDTO grupoTarea);
+
+	/**
+	 * Actualiza un grupoTarea <GrupoTareaDTO>
+	 * 
+	 * @param grupoTarea <GrupoTareaDTO>
+	 * @return
+	 */
+	Long update(GrupoTareaDTO grupoTarea);
+
+	/**
+	 * elimina un grupoTarea <GrupoTareaDTO>
+	 * 
+	 * @param grupoTarea <GrupoTareaDTO>
+	 * @return
+	 */
+	Long delete(GrupoTareaDTO grupoTarea);
+
+	/**
+	 * Devuelve los registros de la tabla grupo_tareas.
+	 * 
+	 * @param complejidad <ComplejidadDTO>
+	 * @return lista de <GrupoTareaDTO>
+	 */
+	List<GrupoTareaDTO> getGruposComplejidad(ComplejidadDTO compljidad);
+	
+	/**
+	 * Devuelve los registros de la tabla grupo_tareas.
+	 * 
+	 * @param tamanio <TamanioDTO>
+	 * @return lista de <GrupoTareaDTO>
+	 */
+	List<GrupoTareaDTO> getGruposTamanio(TamanioDTO tamanio);
+}

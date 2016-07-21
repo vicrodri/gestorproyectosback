@@ -1,0 +1,194 @@
+package com.capgemini.gestorproyectos.model;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.capgemini.gestorproyectos.util.JSONDateDeserializer;
+import com.capgemini.gestorproyectos.util.JSONDateSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+/**
+ * @author capgemini
+ *
+ * Representacion del objeto Cliente.
+ */
+public class ProyectoDTO implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8289664149936590184L;
+
+	private Long id;
+	
+	@NotEmpty(message="El nombre del proyecto es obligatorio")
+	private String nombre;
+	
+	@NotEmpty(message="La descripcion del proyecto es obligatoria")
+	private String descripcion;
+	
+	@NotNull(message="La fecha de inicio del proyecto es obligatoria")
+	private Date fechaInicio;
+	
+	private Date fechaFin;
+
+	private Boolean cerrado;
+	
+	private ClienteDTO cliente;
+	
+	public ProyectoDTO() {
+		
+	}
+
+	/**
+	 * @param id
+	 * @param nombre
+	 * @param descripcion
+	 * @param fechaInicio
+	 * @param fechaFin
+	 * @param cerrado
+	 * @param cliente
+	 */
+	public ProyectoDTO(Long id, String nombre, String descripcion, Date fechaInicio, Date fechaFin, Boolean cerrado,
+			ClienteDTO cliente) {
+		this.id = id;
+		this.nombre = nombre;
+		this.descripcion = descripcion;
+		this.fechaInicio = fechaInicio;
+		this.fechaFin = fechaFin;
+		this.cerrado = cerrado;
+		this.cliente = cliente;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public Long getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	/**
+	 * @return the nombre
+	 */
+	public String getNombre() {
+		return nombre;
+	}
+
+	/**
+	 * @param nombre the nombre to set
+	 */
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	/**
+	 * @return the descripcion
+	 */
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	/**
+	 * @param descripcion the descripcion to set
+	 */
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+	/**
+	 * @return the fechaInicio
+	 */
+	@JsonSerialize(using=JSONDateSerializer.class)
+	public Date getFechaInicio() {
+		return fechaInicio;
+	}
+
+	/**
+	 * @param fechaInicio the fechaInicio to set
+	 */
+	@JsonDeserialize(using=JSONDateDeserializer.class)
+	public void setFechaInicio(Date fechaInicio) {
+		this.fechaInicio = fechaInicio;
+	}
+
+	/**
+	 * @return the fechaFin
+	 */
+	@JsonSerialize(using=JSONDateSerializer.class)
+	public Date getFechaFin() {
+		return fechaFin;
+	}
+
+	/**
+	 * @param fechaFin the fechaFin to set
+	 */
+	@JsonDeserialize(using=JSONDateDeserializer.class)
+	public void setFechaFin(Date fechaFin) {
+		this.fechaFin = fechaFin;
+	}
+
+	/**
+	 * @return the cerrado
+	 */
+	public Boolean getCerrado() {
+		return cerrado;
+	}
+
+	/**
+	 * @param cerrado the cerrado to set
+	 */
+	public void setCerrado(Boolean cerrado) {
+		this.cerrado = cerrado;
+	}
+
+	/**
+	 * @return the cliente
+	 */
+	public ClienteDTO getCliente() {
+		return cliente;
+	}
+
+	/**
+	 * @param cliente the cliente to set
+	 */
+	public void setCliente(ClienteDTO cliente) {
+		this.cliente = cliente;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ProyectoDTO [id=");
+		builder.append(id);
+		builder.append(", nombre=");
+		builder.append(nombre);
+		builder.append(", descripcion=");
+		builder.append(descripcion);
+		builder.append(", fechaInicio=");
+		builder.append(fechaInicio);
+		builder.append(", fechaFin=");
+		builder.append(fechaFin);
+		builder.append(", cerrado=");
+		builder.append(cerrado);
+		builder.append(", cliente=");
+		builder.append(cliente);
+		builder.append("]");
+		return builder.toString();
+	}
+
+}

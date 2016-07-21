@@ -1,0 +1,65 @@
+package com.capgemini.gestorproyectos.service;
+
+import java.util.List;
+
+import com.capgemini.gestorproyectos.model.ArquitecturaDTO;
+import com.capgemini.gestorproyectos.model.ItemDTO;
+import com.capgemini.gestorproyectos.model.TecnologiaDTO;
+
+public interface ItemService {
+
+	/**
+	 * Recupera una lista de items en funcion del filtro indicado.
+	 * 
+	 * @param item <ItemDTO>
+	 * @return lista de <ItemDTO>
+	 * @throws Exception
+	 */
+	List<ItemDTO> getItems(ItemDTO item) throws Exception;
+	
+	/**
+	 * Crea un registro de tipo <ItemDTO> en BBDD
+	 * 
+	 * @param item <ItemDTO>
+	 * @return item <ItemDTO> añadido con su ID
+	 * @throws Exception
+	 */
+	ItemDTO addItem(ItemDTO item) throws Exception;
+	
+	/**
+	 * Actualiza un registro de tipo <ItemDTO> en BBDD
+	 * 
+	 * @param item <ItemDTO>
+	 * @return 
+	 * @throws Exception
+	 */
+	ItemDTO updateItem(ItemDTO item) throws Exception;
+	
+	/**
+	 * Elimina un registro de tipo <ItemDTO> en BBDD
+	 * 
+	 * @param item <ItemDTO>
+	 * @return 
+	 * @throws Exception
+	 */
+	Boolean deleteItem(ItemDTO item) throws Exception;
+	
+	/**
+	 * Devuelve los items asociados a una tecnologia pasada por parametro.
+	 * 
+	 * @param cliente <TecnologiaDTO>
+	 * @return lista de <ItemDTO>
+	 * @throws Exception
+	 */
+	List<ItemDTO> getItemsTecnologia(TecnologiaDTO tecnologia) throws Exception;
+
+	/**
+	 * Devuelve los items asociados a una arquitectura pasada por parametro.
+	 * 
+	 * @param cliente <ArquitecturaDTO>
+	 * @return lista de <ItemDTO>
+	 * @throws Exception
+	 */
+	List<ItemDTO> getItemsArquitectura(ArquitecturaDTO arquitectura);
+
+}

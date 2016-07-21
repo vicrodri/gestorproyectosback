@@ -1,0 +1,55 @@
+package com.capgemini.gestorproyectos.dao;
+
+import java.util.List;
+
+import com.capgemini.gestorproyectos.model.GrupoTareaDTO;
+import com.capgemini.gestorproyectos.model.TareaDTO;
+
+/**
+ * DAO para las operaciones de BBDD de la tabla tareas
+ * mapea al fichero TareaMapper.xml
+ * @author capgemini
+ *
+ */
+public interface TareaDAO {
+	
+	/**
+	 * Devuelve los registros de la tabla tareas.
+	 * 
+	 * @param tarea <TareaDTO>
+	 * @return lista de <TareaDTO>
+	 */
+	List<TareaDTO> get(TareaDTO tarea);
+
+	/**
+	 * Crear un tarea <TareaDTO>
+	 * 
+	 * @param tarea <TareaDTO>
+	 * @return tarea <TareaDTO> creado
+	 */
+	Long add(TareaDTO tarea);
+
+	/**
+	 * Actualiza un tarea <TareaDTO>
+	 * 
+	 * @param tarea <TareaDTO>
+	 * @return
+	 */
+	Long update(TareaDTO tarea);
+
+	/**
+	 * elimina un tarea <TareaDTO>
+	 * 
+	 * @param tarea <TareaDTO>
+	 * @return
+	 */
+	Long delete(TareaDTO tarea);
+
+	/**
+	 * Devuelve los registros de la tabla tareas.
+	 * 
+	 * @param grupoTarea <GrupoTareaDTO>
+	 * @return lista de <TareaDTO>
+	 */
+	List<TareaDTO> getTareasGrupo(GrupoTareaDTO grupoTarea);
+}

@@ -1,0 +1,68 @@
+package com.capgemini.gestorproyectos.service.impl;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.capgemini.gestorproyectos.dao.RolDAO;
+import com.capgemini.gestorproyectos.exceptions.GestorProyectosException;
+import com.capgemini.gestorproyectos.model.RolDTO;
+import com.capgemini.gestorproyectos.service.AsignacionService;
+import com.capgemini.gestorproyectos.service.RolService;
+
+@Service
+public class RolServiceImpl implements RolService {
+
+	@Autowired
+	private RolDAO rolDAO;
+	
+	@Autowired
+	private AsignacionService asignacionService; 
+
+	private Logger logger = LoggerFactory.getLogger(RolServiceImpl.class);
+	
+	public List<RolDTO> get(RolDTO rol) throws Exception {
+		logger.debug("[INICIO] - getRoles - Filtro: " + rol);
+		return this.rolDAO.get(rol);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public RolDTO add(RolDTO rol) throws Exception {
+		logger.debug("[INICIO] - addRol - Rol: - " + rol.toString());
+		this.rolDAO.add(rol);
+		return rol;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public RolDTO update(RolDTO rol) throws Exception {
+		logger.debug("[INICIO] - updateRol - Rol: - " + rol.toString());
+		if (this.rolDAO.update(rol) == 0) {
+			throw new GestorProyectosException("000", "El registro a actualizar no existe");
+		}
+		return rol;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public Boolean delete(RolDTO rol) throws Exception {
+		logger.debug("[INICIO] - deleteRol - Rol: - " + rol.toString());
+		if (!this.asignacionService.getAsignacionesRol(rol).isEmpty()) {
+			throw new GestorProyectosException(
+					"000", "No se puede eliminar un registro con asignaciones asociadas");
+		}
+		if (this.rolDAO.delete(rol) == 0) {
+			throw new GestorProyectosException("000", "El registro a eliminar no existe");
+		}
+		return Boolean.TRUE;
+	}
+
+	public List<RolDTO> getAllRoles() throws Exception {
+		logger.debug("[INICIO] - getRoles");
+		return this.rolDAO.getAll();
+	}
+
+}

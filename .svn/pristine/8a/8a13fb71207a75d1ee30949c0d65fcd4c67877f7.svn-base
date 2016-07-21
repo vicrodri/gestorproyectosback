@@ -1,0 +1,46 @@
+package com.capgemini.gestorproyectos.dao;
+
+import java.util.List;
+
+import com.capgemini.gestorproyectos.model.PersonaDTO;
+
+/**
+ * DAO para las operaciones de BBDD de la tabla personas
+ * mapea al fichero PersonaMapper.xml
+ * @author capgemini
+ *
+ */
+public interface PersonaDAO {
+	
+	/**
+	 * Devuelve los registros de la tabla personas.
+	 * 
+	 * @param persona <PersonaDTO>
+	 * @return lista de <PersonaDTO>
+	 */
+	List<PersonaDTO> get(PersonaDTO persona);
+
+	/**
+	 * Crear un persona <PersonaDTO>
+	 * 
+	 * @param persona <PersonaDTO>
+	 * @return persona <PersonaDTO> creado
+	 */
+	Long add(PersonaDTO persona);
+
+	/**
+	 * Actualiza un persona <PersonaDTO>
+	 * 
+	 * @param persona <PersonaDTO>
+	 * @return
+	 */
+	Long update(PersonaDTO persona);
+
+	/**
+	 * Devuelve las personas activas.
+	 * 
+	 * @return lista de <PersonaDTO>
+	 */
+	List<PersonaDTO> getPersonasActivas();
+
+}

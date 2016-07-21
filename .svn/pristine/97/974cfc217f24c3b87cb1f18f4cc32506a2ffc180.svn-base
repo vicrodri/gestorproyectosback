@@ -1,0 +1,68 @@
+package com.capgemini.gestorproyectos.service.impl;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.capgemini.gestorproyectos.dao.ClienteDAO;
+import com.capgemini.gestorproyectos.exceptions.GestorProyectosException;
+import com.capgemini.gestorproyectos.model.ClienteDTO;
+import com.capgemini.gestorproyectos.service.ArquitecturaService;
+import com.capgemini.gestorproyectos.service.ClienteService;
+
+@Service
+public class ClienteServiceImpl implements ClienteService {
+
+	@Autowired
+	private ClienteDAO clienteDAO;
+
+	@Autowired
+	private ArquitecturaService arquitecturaService;
+	
+	private Logger logger = LoggerFactory.getLogger(ClienteServiceImpl.class);
+	
+	public List<ClienteDTO> getClientes(ClienteDTO cliente) throws Exception {
+		logger.debug("[INICIO] - getClientes - Filtro: - " + cliente.toString());
+		return this.clienteDAO.get(cliente);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public ClienteDTO addCliente(ClienteDTO cliente) throws Exception {
+		logger.debug("[INICIO] - addCliente - Cliente: - " + cliente.toString());
+		this.clienteDAO.add(cliente);
+		return cliente;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public ClienteDTO updateCliente(ClienteDTO cliente) throws Exception {
+		logger.debug("[INICIO] - updateCliente - Cliente: - " + cliente.toString());
+		if (this.clienteDAO.update(cliente) == 0) {
+			throw new GestorProyectosException("000", "El registro a actualizar no existe");
+		}
+		return cliente;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public Boolean deleteCliente(ClienteDTO cliente) throws Exception {
+		logger.debug("[INICIO] - deleteCliente - Cliente: - " + cliente.toString());
+		if (!this.arquitecturaService.getArquitecturasCliente(cliente).isEmpty()) {
+			throw new GestorProyectosException(
+					"000", "No se puede eliminar un registro con arquitecturas asociadas");
+		} 
+		if (this.clienteDAO.delete(cliente) == 0) {
+			throw new GestorProyectosException("000", "El registro a eliminar no existe");
+		}
+		return Boolean.TRUE;
+	}
+
+	public List<ClienteDTO> getAll() throws Exception {
+		logger.debug("[INICIO] - getClientes");
+		return this.clienteDAO.getAllClientes();
+	}
+	
+}

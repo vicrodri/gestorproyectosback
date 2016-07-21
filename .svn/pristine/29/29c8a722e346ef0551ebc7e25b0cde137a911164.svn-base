@@ -1,0 +1,116 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.capgemini.gestorproyectos.dao.ItemDAO">
+  
+	<resultMap type="com.capgemini.gestorproyectos.model.ItemDTO" id="itemMap">
+	  <id column="idItem" property="id" javaType="long"/>
+	  <result column="nombre" property="nombre" javaType="string"/>
+	  <result column="descripcion" property="descripcion" javaType="string"/>
+	  <association property="arquitectura" javaType="com.capgemini.gestorproyectos.model.ArquitecturaDTO">
+        <result property="id" column="idArquitectura" />
+        <result property="nombre" column="nombreArq"/>
+    </association>
+    <collection property="tecnologias" ofType="com.capgemini.gestorproyectos.model.TecnologiaDTO">
+        <result property="id" column="idTecnologia" />
+        <result property="nombre" column="nombreTec"/>
+        <result property="capa" column="capa"/>
+        <result property="lenguaje" column="lenguaje"/>
+    </collection>
+	</resultMap>
+	
+	<resultMap type="com.capgemini.gestorproyectos.model.ItemDTO" id="itemTecMap">
+    <id column="idItem" property="id" javaType="long"/>
+    <result column="nombre" property="nombre" javaType="string"/>
+    <result column="descripcion" property="descripcion" javaType="string"/>
+  </resultMap>
+	
+	<select id="get" resultMap="itemMap" 
+    parameterType="com.capgemini.gestorproyectos.model.ItemDTO">
+    <if test="nombre!=null">
+      <bind name="patronNombre" value="'%' + _parameter.getNombre() + '%'" />
+    </if>
+    <if test="descripcion!=null">
+      <bind name="patronDesc" value="'%' + _parameter.getDescripcion() + '%'" />
+    </if>
+    select items.idItem, items.nombre, items.descripcion, arq.idArquitectura, 
+      arq.nombre as nombreArq, tec.idTecnologia, tec.nombre as nombreTec,
+      tec.capa, tec.lenguaje
+    from arquitecturas arq, items 
+    left join items_tecnologias itec 
+      on items.idItem = itec.idItem
+    left join tecnologias tec
+      on itec.idTecnologia = tec.idTecnologia
+    where items.idArquitectura = arq.idArquitectura
+    <choose>
+      <when test="id!=null">
+        and items.idItem = #{id}
+      </when>
+      <when test="nombre!=null or descripcion != null or arquitectura != null and arquitectura.id != null">
+        <if test="nombre!=null">and items.nombre like #{patronNombre}</if>
+        <if test="descripcion!=null">and items.descripcion like #{patronDesc}</if>
+        <if test="arquitectura != null and arquitectura.id != null">and arq.idArquitectura = #{arquitectura.id}</if>
+      </when>
+    </choose>
+    order by items.idItem
+  </select>
+  
+  <insert id="add" parameterType="com.capgemini.gestorproyectos.model.ItemDTO"   
+    useGeneratedKeys="true" keyProperty="id">
+    insert into items (
+      nombre,
+      descripcion,
+      idArquitectura
+    )
+    values (
+      #{nombre},
+      #{descripcion},
+      #{arquitectura.id}
+    )
+  </insert>
+  
+  <insert id="addRelacion" parameterType="com.capgemini.gestorproyectos.model.ItemDTO">
+    insert into items_tecnologias (
+      idItem,
+      idTecnologia
+    )
+    values 
+      <foreach item="element" index="index" collection="tecnologias"
+        open="(" separator="),(" close=")">
+            #{id}, #{element.id}
+      </foreach>
+  </insert>
+  
+  <update id="update" parameterType="com.capgemini.gestorproyectos.model.ItemDTO">
+    update items set
+      <if test='nombre!=null'>
+        nombre=#{nombre}
+      </if>
+      <if test='descripcion!=null'>
+        , descripcion=#{descripcion} 
+      </if>
+      <if test='arquitectura!=null and arquitectura.id!=null'>
+        , idArquitectura=#{arquitectura.id}
+      </if>
+    where idItem = #{id}
+  </update>
+  
+  <delete id="delete" parameterType="com.capgemini.gestorproyectos.model.ItemDTO">
+    delete from items where idItem = #{id}
+  </delete> 
+    
+  <delete id="deleteRelacion" parameterType="com.capgemini.gestorproyectos.model.ItemDTO">
+    delete from items_tecnologias where idItem = #{id}
+  </delete>
+  
+  <select id="getItemsTecnologia" resultMap="itemTecMap"
+    parameterType="com.capgemini.gestorproyectos.model.TecnologiaDTO">
+    select items.* from items, items_tecnologias itemtec 
+    where items.idItem = itemtec.idItem and itemtec.idTecnologia = #{id}
+    order by idItem
+  </select>
+  
+   <select id="getItemsArquitectura" resultMap="itemTecMap"
+    parameterType="com.capgemini.gestorproyectos.model.ArquitecturaDTO">
+    select * from items where idArquitectura = #{id} 
+    order by idItem 
+  </select>
+</mapper>

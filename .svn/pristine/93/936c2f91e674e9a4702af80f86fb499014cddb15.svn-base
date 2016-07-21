@@ -1,0 +1,110 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.capgemini.gestorproyectos.dao.TareaDAO">
+  
+	<resultMap type="com.capgemini.gestorproyectos.model.TareaDTO" id="TareaCompletaMap">
+	  <id column="idTarea" property="id" javaType="long"/>
+	  <result column="nombreTarea" property="nombre" javaType="string"/>
+	  <result column="horas" property="horas" javaType="Long"/>
+	  <result column="comentarios" property="comentarios" javaType="string"/>
+	  <association property="grupoTarea" javaType="com.capgemini.gestorproyectos.model.GrupoTareaDTO" >
+		  <id column="idGrupoTarea" property="id" javaType="long"/>
+		  <association property="arquitectura" javaType="com.capgemini.gestorproyectos.model.ArquitecturaDTO" >
+	      <id column="idArquitectura" property="id" javaType="long"/>
+	      <result column="nombreArquitectura" property="nombre" javaType="string"/>
+	    </association>
+	    <association property="item" javaType="com.capgemini.gestorproyectos.model.ItemDTO" >
+	      <id column="idItem" property="id" javaType="long"/>
+	      <result column="nombreItem" property="nombre" javaType="string"/>
+	    </association>
+	    <association property="complejidad" javaType="com.capgemini.gestorproyectos.model.ComplejidadDTO" >
+	      <id column="idComplejidad" property="id" javaType="long"/>
+	      <result column="descComp" property="descripcion" javaType="string"/>
+	    </association>
+	    <association property="tamanio" javaType="com.capgemini.gestorproyectos.model.TamanioDTO" >
+	      <id column="idTamanio" property="id" javaType="long"/>
+	      <result column="descTam" property="descripcion" javaType="string"/>
+	    </association>
+	  </association>
+	</resultMap>
+  
+  <resultMap type="com.capgemini.gestorproyectos.model.TareaDTO" id="TareaMap">
+    <id column="idTarea" property="id" javaType="long"/>
+    <result column="nombreTarea" property="nombre" javaType="string"/>
+    <result column="horas" property="horas" javaType="Long"/>
+    <result column="comentarios" property="comentarios" javaType="string"/>
+  </resultMap>
+
+  <sql id="filtrosGT">
+     <if test="grupoTarea.item!=null and grupoTarea.item.id!=null"> and items.idItem = #{grupoTarea.item.id}</if>
+     <if test="grupoTarea.complejidad!=null and grupoTarea.complejidad.id!=null"> and comp.idComplejidad = #{grupoTarea.complejidad.id}</if>
+     <if test="grupoTarea.arquitectura!=null and grupoTarea.arquitectura.id!=null"> and arq.idArquitectura = #{grupoTarea.arquitectura.id}</if>
+     <if test="grupoTarea.tamanio!=null and grupoTarea.tamanio.id!=null"> and tam.idTamanio = #{grupoTarea.tamanio.id}</if>
+   </sql>
+     
+  <select id="get" resultMap="TareaCompletaMap">
+     <if test="nombre!=null">
+      <bind name="patronNombre" value="'%' + _parameter.getNombre() + '%'" />
+    </if>
+
+    select t.idTarea, t.nombre as nombreTarea, 
+    <include refid="com.capgemini.gestorproyectos.dao.GrupoTareaDAO.columnasGT" />
+		from tareas t,  
+		<include refid="com.capgemini.gestorproyectos.dao.GrupoTareaDAO.cruceGT" />
+		<choose>
+			<when test="id!=null">
+        and t.idTarea = #{id}
+      </when>
+	    <when test="nombre!=null or grupoTarea!=null">
+       <if test="nombre!=null">and nombre like #{patronNombre} </if>
+       <if test="grupoTarea!=null">
+          <include refid="com.capgemini.gestorproyectos.dao.TareaDAO.filtrosGT" />
+       </if>
+	    </when>
+    </choose>
+		order by t.idTarea
+  </select>
+  
+  <insert id="add" parameterType="com.capgemini.gestorproyectos.model.TareaDTO"   
+    useGeneratedKeys="true" keyProperty="id">
+    insert into tareas (
+      nombre,
+      idGrupoTarea,
+      horas,
+      comentarios 
+    )
+    values (
+      #{nombre},
+      #{grupoTarea.id},
+      #{horas},
+      #{comentarios}
+    )
+  </insert>
+  
+  <update id="update" parameterType="com.capgemini.gestorproyectos.model.TareaDTO">
+    update tareas set
+      <if test="nombre!=null">
+        idTarea=#{id} 
+      </if>
+      <if test="grupoTarea!=null and grupoTarea.id!=null">
+        , tareas.idGrupoTarea = #{grupoTarea.Id}
+      </if>
+      <if test="horas!=null">
+        , horas = #{horas}
+      </if>
+      <if test="comentarios!=null">
+        , comentarios = #{comentarios}
+      </if>
+    where idTarea = #{id}
+  </update>
+  
+  <delete id="delete" parameterType="com.capgemini.gestorproyectos.model.TareaDTO">
+    delete from tareas where idTarea = #{id}
+  </delete> 
+    
+   <select id="getTareasGrupo" resultMap="TareaMap"
+    parameterType="com.capgemini.gestorproyectos.model.GrupoTareaDTO">
+    select idTarea from tareas 
+    where idGrupoTarea=#{id}
+    order by idTarea
+  </select>
+</mapper>

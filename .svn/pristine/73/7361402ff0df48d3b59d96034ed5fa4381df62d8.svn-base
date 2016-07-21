@@ -1,0 +1,45 @@
+package com.capgemini.gestorproyectos.service;
+
+import java.util.List;
+
+import com.capgemini.gestorproyectos.model.ComplejidadDTO;
+
+public interface ComplejidadService {
+
+	/**
+	 * Recupera una lista de complejidades.
+	 * 
+	 * @param complejidad <ComplejidadDTO>
+	 * @return lista de <ComplejidadDTO>
+	 * @throws Exception
+	 */
+	List<ComplejidadDTO> getComplejidades(ComplejidadDTO complejidad) throws Exception;
+	
+	/**
+	 * Crea un registro de tipo <ComplejidadDTO> en BBDD
+	 * 
+	 * @param complejidad <ComplejidadDTO>
+	 * @return complejidad <ComplejidadDTO> añadida con su ID
+	 * @throws Exception
+	 */
+	ComplejidadDTO addComplejidad(ComplejidadDTO complejidad) throws Exception;
+	
+	/**
+	 * Actualiza un registro de tipo <ComplejidadDTO> en BBDD
+	 * 
+	 * @param complejidad <ComplejidadDTO>
+	 * @return complejidad <ComplejidadDTO> actualizada
+	 * @throws Exception
+	 */
+	ComplejidadDTO updateComplejidad(ComplejidadDTO complejidad) throws Exception;
+	
+	/**
+	 * Elimina un registro de tipo <ComplejidadDTO> en BBDD
+	 * 
+	 * @param complejidad <ComplejidadDTO>
+	 * @return 
+	 * @throws Exception
+	 */
+	Boolean deleteComplejidad(ComplejidadDTO complejidad) throws Exception;
+	
+}

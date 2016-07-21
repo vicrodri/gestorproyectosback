@@ -1,0 +1,45 @@
+package com.capgemini.gestorproyectos.service;
+
+import java.util.List;
+
+import com.capgemini.gestorproyectos.model.RolDTO;
+
+public interface RolService {
+
+	/**
+	 * Recupera una lista de roles.
+	 * 
+	 * @param rol <RolDTO>
+	 * @return lista de <RolDTO>
+	 * @throws Exception
+	 */
+	List<RolDTO> getRoles(RolDTO rol) throws Exception;
+	
+	/**
+	 * Crea un registro de tipo <RolDTO> en BBDD
+	 * 
+	 * @param rol <RolDTO>
+	 * @return rol <RolDTO> añadido con su ID
+	 * @throws Exception
+	 */
+	RolDTO addRol(RolDTO rol) throws Exception;
+	
+	/**
+	 * Actualiza un registro de tipo <RolDTO> en BBDD
+	 * 
+	 * @param rol <RolDTO>
+	 * @return rol <RolDTO> actualizado
+	 * @throws Exception
+	 */
+	RolDTO updateRol(RolDTO rol) throws Exception;
+	
+	/**
+	 * Elimina un registro de tipo <RolDTO> en BBDD
+	 * 
+	 * @param rol <RolDTO>
+	 * @return 
+	 * @throws Exception
+	 */
+	Boolean deleteRol(RolDTO rol) throws Exception;
+	
+}

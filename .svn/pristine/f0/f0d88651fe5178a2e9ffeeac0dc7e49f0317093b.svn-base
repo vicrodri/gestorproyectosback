@@ -1,0 +1,79 @@
+package com.capgemini.gestorproyectos.service.impl;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.capgemini.gestorproyectos.dao.TareaDAO;
+import com.capgemini.gestorproyectos.exceptions.GestorProyectosException;
+import com.capgemini.gestorproyectos.model.GrupoTareaDTO;
+import com.capgemini.gestorproyectos.model.TareaDTO;
+import com.capgemini.gestorproyectos.service.GrupoTareaService;
+import com.capgemini.gestorproyectos.service.TareaService;
+
+@Service
+public class TareaServiceImpl implements TareaService {
+
+	@Autowired
+	private TareaDAO tareaDAO;
+
+	@Autowired
+	private GrupoTareaService grupoTareaService;
+	
+	private Logger logger = LoggerFactory.getLogger(TareaServiceImpl.class);
+
+	public List<TareaDTO> get(TareaDTO tarea) throws Exception {
+		logger.debug("[INICIO] - getTareas - Filtro: - " + tarea.toString());
+		return this.tareaDAO.get(tarea);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public TareaDTO add(TareaDTO tarea) throws Exception {
+		logger.debug("[INICIO] - addTarea - Tarea: - " + tarea.toString());
+		
+		List <GrupoTareaDTO> grupoTareas = this.grupoTareaService.get(tarea.getGrupoTarea());
+		if (grupoTareas.isEmpty() || grupoTareas.size() > 1) {
+			throw new GestorProyectosException("000", "No existe un Grupo de Tareas asociado a los elementos selccionados");
+		} else {
+			tarea.setGrupoTarea(grupoTareas.get(0));
+		}
+		
+		this.tareaDAO.add(tarea);
+		return tarea;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public TareaDTO update(TareaDTO tarea) throws Exception {
+		logger.debug("[INICIO] - updateTarea - Tarea: - " + tarea.toString());
+		
+		List <GrupoTareaDTO> grupoTareas = this.grupoTareaService.get(tarea.getGrupoTarea());
+		if (grupoTareas.isEmpty() || grupoTareas.size() > 1) {
+			throw new GestorProyectosException("000", "No existe un Grupo de Tareas asociado a los elementos selccionados");
+		} else {
+			tarea.setGrupoTarea(grupoTareas.get(0));
+		}
+		
+		this.tareaDAO.update(tarea);
+		return tarea;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public Boolean delete(TareaDTO tarea) throws Exception {
+		logger.debug("[INICIO] - deleteTarea - Tarea: - " + tarea.toString());
+		if (this.tareaDAO.delete(tarea) == 0) {
+			throw new GestorProyectosException("000", "El registro a eliminar no existe");
+		}
+		return Boolean.TRUE;
+	}
+
+	public List<TareaDTO> getTareasGrupo(GrupoTareaDTO grupoTarea) throws Exception {
+		logger.debug("[INICIO] - getTareasGrupo - GrupoTarea: - " + grupoTarea.toString());
+		return this.tareaDAO.getTareasGrupo(grupoTarea);
+	}
+	
+}

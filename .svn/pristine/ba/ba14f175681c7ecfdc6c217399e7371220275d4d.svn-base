@@ -1,0 +1,37 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.capgemini.gestorproyectos.dao.ComplejidadDAO">
+  
+	<resultMap type="com.capgemini.gestorproyectos.model.ComplejidadDTO" id="complejidadMap">
+	  <id column="idComplejidad" property="id" javaType="long"/>
+	  <result column="descripcion" property="descripcion" javaType="string"/>
+	</resultMap>
+  
+  <select id="get" resultMap="complejidadMap">
+    select * from complejidades 
+    <if test="id!=null"> where idComplejidad=#{id}</if>
+    order by idComplejidad
+  </select>
+  
+  <insert id="add" parameterType="com.capgemini.gestorproyectos.model.ComplejidadDTO"   
+    useGeneratedKeys="true" keyProperty="id">
+    insert into complejidades (
+      descripcion
+    )
+    values (
+      #{descripcion}
+    )
+  </insert>
+  
+  <update id="update" parameterType="com.capgemini.gestorproyectos.model.ComplejidadDTO">
+    update complejidades set
+      <if test='descripcion!=null'>
+        descripcion=#{descripcion}
+      </if>
+    where idComplejidad = #{id}
+  </update>
+  
+  <delete id="delete" parameterType="com.capgemini.gestorproyectos.model.ComplejidadDTO">
+    delete from complejidades where idComplejidad = #{id}
+  </delete> 
+    
+</mapper>

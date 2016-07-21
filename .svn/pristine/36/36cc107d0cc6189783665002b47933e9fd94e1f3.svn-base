@@ -1,0 +1,52 @@
+package com.capgemini.gestorproyectos.service;
+
+import java.util.List;
+
+import com.capgemini.gestorproyectos.model.ClienteDTO;
+
+public interface ClienteService {
+
+	/**
+	 * Recupera una lista de clientes en funcion del filtro indicado.
+	 * 
+	 * @param cliente <ClienteDTO>
+	 * @return lista de <ClienteDTO>
+	 * @throws Exception
+	 */
+	List<ClienteDTO> getClientes(ClienteDTO cliente) throws Exception;
+	
+	/**
+	 * Crea un registro de tipo <ClienteDTO> en BBDD
+	 * 
+	 * @param cliente <ClienteDTO>
+	 * @return cliente <ClienteDTO> añadido con su ID
+	 * @throws Exception
+	 */
+	ClienteDTO addCliente(ClienteDTO cliente) throws Exception;
+	
+	/**
+	 * Actualiza un registro de tipo <ClienteDTO> en BBDD
+	 * 
+	 * @param cliente <ClienteDTO>
+	 * @return 
+	 * @throws Exception
+	 */
+	ClienteDTO updateCliente(ClienteDTO cliente) throws Exception;
+	
+	/**
+	 * Elimina un registro de tipo <ClienteDTO> en BBDD
+	 * 
+	 * @param cliente <ClienteDTO>
+	 * @return 
+	 * @throws Exception
+	 */
+	Boolean deleteCliente(ClienteDTO cliente) throws Exception;
+	
+	/**
+	 * Recupera una lista de clientes para cargar los desplegables.
+	 * 
+	 * @return lista de <ClienteDTO>
+	 * @throws Exception
+	 */
+	List<ClienteDTO> getAll() throws Exception;
+}

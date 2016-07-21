@@ -1,0 +1,45 @@
+package com.capgemini.gestorproyectos.service;
+
+import java.util.List;
+
+import com.capgemini.gestorproyectos.model.TamanioDTO;
+
+public interface TamanioService {
+
+	/**
+	 * Recupera una lista de tamanios.
+	 * 
+	 * @param tamanio <TamanioDTO>
+	 * @return lista de <TamanioDTO>
+	 * @throws Exception
+	 */
+	List<TamanioDTO> getTamanios(TamanioDTO tamanio) throws Exception;
+	
+	/**
+	 * Crea un registro de tipo <TamanioDTO> en BBDD
+	 * 
+	 * @param tamanio <TamanioDTO>
+	 * @return tamanio <TamanioDTO> añadido con su ID
+	 * @throws Exception
+	 */
+	TamanioDTO addTamanio(TamanioDTO tamanio) throws Exception;
+	
+	/**
+	 * Actualiza un registro de tipo <TamanioDTO> en BBDD
+	 * 
+	 * @param tamanio <TamanioDTO>
+	 * @return tamanio <TamanioDTO> actualizada
+	 * @throws Exception
+	 */
+	TamanioDTO updateTamanio(TamanioDTO tamanio) throws Exception;
+	
+	/**
+	 * Elimina un registro de tipo <TamanioDTO> en BBDD
+	 * 
+	 * @param tamanio <TamanioDTO>
+	 * @return 
+	 * @throws Exception
+	 */
+	Boolean deleteTamanio(TamanioDTO tamanio) throws Exception;
+	
+}

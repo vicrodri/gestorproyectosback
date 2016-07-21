@@ -1,0 +1,43 @@
+package com.capgemini.gestorproyectos.service;
+
+import java.util.List;
+
+import com.capgemini.gestorproyectos.model.PersonaDTO;
+
+public interface PersonaService {
+
+	/**
+	 * Recupera una lista de personas en funcion del filtro indicado.
+	 * 
+	 * @param persona <PersonaDTO>
+	 * @return lista de <PersonaDTO>
+	 * @throws Exception
+	 */
+	List<PersonaDTO> getPersonas(PersonaDTO persona) throws Exception;
+	
+	/**
+	 * Crea un registro de tipo <PersonaDTO> en BBDD
+	 * 
+	 * @param persona <PersonaDTO>
+	 * @return persona <PersonaDTO> añadido con su ID
+	 * @throws Exception
+	 */
+	PersonaDTO addPersona(PersonaDTO persona) throws Exception;
+	
+	/**
+	 * Actualiza un registro de tipo <PersonaDTO> en BBDD
+	 * 
+	 * @param persona <PersonaDTO>
+	 * @return 
+	 * @throws Exception
+	 */
+	PersonaDTO updatePersona(PersonaDTO persona) throws Exception;
+	
+	/**
+	 * Recupera una lista de personas activas.
+	 * 
+	 * @return lista de <PersonaDTO>
+	 * @throws Exception
+	 */
+	List<PersonaDTO> getPersonasActivas() throws Exception;
+}

@@ -1,0 +1,70 @@
+package com.capgemini.gestorproyectos.service.impl;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.capgemini.gestorproyectos.dao.ComplejidadDAO;
+import com.capgemini.gestorproyectos.exceptions.GestorProyectosException;
+import com.capgemini.gestorproyectos.model.ComplejidadDTO;
+import com.capgemini.gestorproyectos.service.ComplejidadService;
+import com.capgemini.gestorproyectos.service.GrupoTareaService;
+
+@Service
+public class ComplejidadServiceImpl implements ComplejidadService {
+
+	@Autowired
+	private ComplejidadDAO complejidadDAO;
+
+	@Autowired
+	private GrupoTareaService grupoTareaService;
+	
+	private Logger logger = LoggerFactory.getLogger(ComplejidadServiceImpl.class);
+	
+	public List<ComplejidadDTO> get(ComplejidadDTO complejidad) throws Exception {
+		logger.debug("[INICIO] - getComplejidades - Filtro: " + complejidad);
+		return this.complejidadDAO.get(complejidad);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public ComplejidadDTO add(ComplejidadDTO complejidad) throws Exception {
+		logger.debug("[INICIO] - addComplejidad - Complejidad: - " + complejidad.toString());
+		this.complejidadDAO.add(complejidad);
+		return complejidad;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public ComplejidadDTO update(ComplejidadDTO complejidad) throws Exception {
+		logger.debug("[INICIO] - updateComplejidad - Complejidad: - " + complejidad.toString());
+		if (this.complejidadDAO.update(complejidad) == 0) {
+			throw new GestorProyectosException("000", "El registro a actualizar no existe");
+		}
+		return complejidad;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public Boolean delete(ComplejidadDTO complejidad) throws Exception {
+		logger.debug("[INICIO] - deleteComplejidad - Complejidad: - " + complejidad.toString());
+		
+		if (!this.grupoTareaService.getGruposComplejidad(complejidad).isEmpty()) {
+			throw new GestorProyectosException(
+					"000", "No se puede eliminar un registro asociado a un grupo de tareas");
+		}
+		
+		if (this.complejidadDAO.delete(complejidad) == 0) {
+			throw new GestorProyectosException("000", "El registro a eliminar no existe");
+		}
+		return Boolean.TRUE;
+	}
+
+	public List<ComplejidadDTO> getAllComplejidades() throws Exception {
+		logger.debug("[INICIO] - getAllComplejidades ");
+		return this.complejidadDAO.getAll();
+	}
+
+}

@@ -1,0 +1,108 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.capgemini.gestorproyectos.dao.GrupoTareaDAO">
+  
+	<resultMap type="com.capgemini.gestorproyectos.model.GrupoTareaDTO" id="GrupoTareaMap">
+	  <id column="idGrupoTarea" property="id" javaType="long"/>
+	  <association property="arquitectura" javaType="com.capgemini.gestorproyectos.model.ArquitecturaDTO" >
+      <id column="idArquitectura" property="id" javaType="long"/>
+      <result column="nombreArquitectura" property="nombre" javaType="string"/>
+    </association>
+    <association property="item" javaType="com.capgemini.gestorproyectos.model.ItemDTO" >
+      <id column="idItem" property="id" javaType="long"/>
+      <result column="nombreItem" property="nombre" javaType="string"/>
+    </association>
+    <association property="complejidad" javaType="com.capgemini.gestorproyectos.model.ComplejidadDTO" >
+      <id column="idComplejidad" property="id" javaType="long"/>
+      <result column="descComp" property="descripcion" javaType="string"/>
+    </association>
+    <association property="tamanio" javaType="com.capgemini.gestorproyectos.model.TamanioDTO" >
+      <id column="idTamanio" property="id" javaType="long"/>
+      <result column="descTam" property="descripcion" javaType="string"/>
+    </association>
+	</resultMap>
+  
+  <resultMap type="com.capgemini.gestorproyectos.model.GrupoTareaDTO" id="GrupoMap">
+    <id column="idGrupoTarea" property="id" javaType="long"/>
+  </resultMap>
+  <sql id="columnasGT">
+    gt.idGrupoTarea, arq.idArquitectura, arq.nombre as nombreArquitectura, 
+    items.idItem, items.nombre as nombreItem, comp.idComplejidad, comp.descripcion as descComp, 
+    tam.idTamanio, tam.descripcion as descTam
+  </sql>
+  
+  <sql id="cruceGT">
+    grupo_tareas gt, arquitecturas arq, items, complejidades comp,tamanios tam
+    where gt.idItem = items.idItem and items.idArquitectura = arq.idArquitectura and
+    gt.idComplejidad = comp.idComplejidad and gt.idTamanio = tam.idTamanio
+  </sql>
+  
+  <sql id="filtrosGT">
+    <if test="item!=null and item.id!=null"> and items.idItem = #{item.id}</if>
+    <if test="complejidad!=null and complejidad.id!=null"> and comp.idComplejidad = #{complejidad.id}</if>
+    <if test="arquitectura!=null and arquitectura.id!=null"> and arq.idArquitectura = #{arquitectura.id}</if>
+    <if test="tamanio!=null and tamanio.id!=null"> and tam.idTamanio = #{tamanio.id}</if>
+  </sql>
+  
+  <select id="get" resultMap="GrupoTareaMap">
+    select 
+    <include refid="columnasGT" />
+		from 
+		<include refid="cruceGT" />
+		<choose>
+			<when test="id!=null">
+        and gt.idGrupoTarea = #{id}
+      </when>
+	    <when test="item!=null or complejidad != null or arquitectura != null or tamanio != null">
+        <include refid="filtrosGT" />
+	    </when>
+    </choose>
+		order by gt.idGrupoTarea
+  </select>
+  
+  <insert id="add" parameterType="com.capgemini.gestorproyectos.model.GrupoTareaDTO"   
+    useGeneratedKeys="true" keyProperty="id">
+    insert into grupo_tareas (
+      idItem,
+      idComplejidad,
+      idTamanio 
+    )
+    values (
+      #{item.id},
+      #{complejidad.id},
+      #{tamanio.id}
+    )
+  </insert>
+  
+  <update id="update" parameterType="com.capgemini.gestorproyectos.model.GrupoTareaDTO">
+    update grupo_tareas set
+      <if test="item!=null and item.id!=null">
+        idItem=#{item.id}, 
+      </if>
+      <if test="complejidad!=null and complejidad.id!=null">
+        idComplejidad = #{complejidad.id},
+      </if>
+      <if test="tamanio!=null and tamanio.id!=null">
+        idTamanio = #{tamanio.id}
+      </if>
+    where idGrupoTarea = #{id}
+  </update>
+  
+  <delete id="delete" parameterType="com.capgemini.gestorproyectos.model.GrupoTareaDTO">
+    delete from grupo_tareas where idGrupoTarea = #{id}
+  </delete> 
+    
+  <select id="getGruposComplejidad" resultMap="GrupoMap"
+    parameterType="com.capgemini.gestorproyectos.model.ComplejidadDTO">
+    select idGrupoTarea from grupo_tareas 
+    where idComplejidad=#{id}
+    order by idGrupoTarea
+  </select>
+  
+  <select id="getGruposTamanio" resultMap="GrupoMap"
+    parameterType="com.capgemini.gestorproyectos.model.TamanioDTO">
+    select idGrupoTarea from grupo_tareas 
+    where idTamanio=#{id}
+    order by idGrupoTarea
+  </select>
+  
+</mapper>

@@ -1,0 +1,90 @@
+/**
+ * 
+ */
+package com.capgemini.gestorproyectos.test;
+
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.capgemini.gestorproyectos.controller.ClienteController;
+import com.capgemini.gestorproyectos.service.ClienteService;
+
+/**
+ * @author vicrodri
+ *
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration
+public class ClienteControllerTest {
+
+	@Configuration
+	static class ClienteControllerTestConfiguration {
+	
+		@Bean
+		public ClienteService clienteService() {
+			return Mockito.mock(ClienteService.class);
+		}
+		
+		@Bean
+		public ClienteController clienteController() {
+			return new ClienteController();
+		}
+	}
+	
+	
+	@Autowired
+	private ClienteController clienteController;
+
+	@Autowired
+	private ClienteService clienteService;
+	
+	
+	/**
+	 * Test method for {@link com.capgemini.gestorproyectos.controller.ClienteController#obtenerClientes(com.capgemini.gestorproyectos.model.ClienteDTO)}.
+	 */
+	@Test
+	public final void testObtenerClientes() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	/**
+	 * Test method for {@link com.capgemini.gestorproyectos.controller.ClienteController#crearCliente(com.capgemini.gestorproyectos.model.ClienteDTO)}.
+	 */
+	@Test
+	public final void testCrearCliente() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	/**
+	 * Test method for {@link com.capgemini.gestorproyectos.controller.ClienteController#actualizarCliente(com.capgemini.gestorproyectos.model.ClienteDTO)}.
+	 */
+	@Test
+	public final void testActualizarCliente() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	/**
+	 * Test method for {@link com.capgemini.gestorproyectos.controller.ClienteController#eliminarCliente(com.capgemini.gestorproyectos.model.ClienteDTO)}.
+	 */
+	@Test
+	public final void testEliminarCliente() {
+		fail("Not yet implemented"); // TODO
+	}
+
+	/**
+	 * Test method for {@link com.capgemini.gestorproyectos.controller.ClienteController#getAllClientes()}.
+	 */
+	@Test
+	public final void testGetAllClientes() {
+		fail("Not yet implemented"); // TODO
+	}
+
+}

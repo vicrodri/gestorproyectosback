@@ -1,0 +1,70 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.capgemini.gestorproyectos.dao.pasosDAO">
+<resultMap type="com.capgemini.gestorproyectos.model.pasosDTO" id="fullMap">
+<id column="idPaso" property="id" javaType="long"></id>
+<result column="horasReales" property="horasReales"  javaType="long"/>
+<result column="fechaInicio" property="fechaInicio" javaType="date"></result>
+<result column="fechaFin" property="fechaInicio" javaType="date"></result>
+<result column="finalizada" property="finalizada" javaType="java.lang.Boolean"  ></result>
+<association property="funcionalidad" column="idFuncionalidad" javaType="com.capgemini.gestorproyectos.model.FuncionalidadesDTO">
+<id column="idFuncionalidad" property="id" javaType="long"/>
+<result column="nombre" property="nombre" javaType="string"></result>
+</association>
+<association property="tarea" javaType="com.capgemini.gestorproyectos.model.TareaDTO" column="idTarea">
+ <id column="idTarea" property="id" javaType="long"/>
+	  <result column="nombre" property="nombre" javaType="string"/>
+	  <result column="horas" property="horas" javaType="Long"/>
+	  <result column="comentarios" property="comentarios" javaType="string"/>
+
+</association>
+</resultMap>
+
+<select id="getAllPasos" resultMap="fullMap">
+
+select idPaso,horasReales,fechaInicio,fechaFin,finalizada,func.nombre,tar.nombre
+from pasos pas join funcionalidades func on pas.idFuncionalidad=func.idFuncionalidad
+join tareas tar on tar.idTarea = pas.idTarea 
+</select>
+<update id="update" parameterType="com.capgemini.gestorproyectos.model.pasosDTO">
+
+update pasos
+
+<set>
+<if test="horasReales!=null">
+horasReales=#{horasReales},
+</if>
+<if test="fechaInicio!=null">
+fechaInicio=#{fechaInicio},
+</if>
+<if test="fechaFin!=null">,
+fechaFin=#{fechaFin},
+</if>
+<if test="funcionalidad!=null">,
+
+idFuncionalidad=#{funcionalidad.id},
+</if>
+<if test="tarea!=null">
+idTarea=#{tarea.id},
+</if>
+finalizada=#{finalizada}
+</set>
+where idPaso=#{id}
+
+</update>
+
+<insert  id="add" keyColumn="idPaso" keyProperty="id" useGeneratedKeys="true" parameterType="com.capgemini.gestorproyectos.model.pasosDTO">
+
+insert into pasos(horasReales,idFuncionalidad,idTarea,fechaInicio,fechaFin,finalizada)
+values(#{horasReales},#{funcionalidad.id},#{tarea.id},#{fechaInicio},#{fechaFin},#{finalizada})
+
+</insert>
+<delete id="delete" parameterType="com.capgemini.gestorproyectos.model.pasosDTO">
+
+delete from pasos where idPaso=#{id}
+</delete>
+<!--  habría que extender aquí según lo necesario -->
+<select id="get" parameterType="com.capgemini.gestorproyectos.model.pasosDTO">
+
+select * from pasos where idPaso=#{id}
+</select>
+</mapper>

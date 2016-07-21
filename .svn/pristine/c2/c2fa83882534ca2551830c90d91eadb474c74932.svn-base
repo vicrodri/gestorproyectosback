@@ -1,0 +1,53 @@
+package com.capgemini.gestorproyectos.service;
+
+import java.util.List;
+
+import com.capgemini.gestorproyectos.model.GrupoTareaDTO;
+import com.capgemini.gestorproyectos.model.TareaDTO;
+
+public interface TareaService {
+
+	/**
+	 * Recupera una lista de tareas.
+	 * 
+	 * @return lista de <TareaDTO>
+	 * @throws Exception
+	 */
+	List<TareaDTO> getTareas(TareaDTO tarea) throws Exception;
+	
+	/**
+	 * Crea un registro de tipo <TareaDTO> en BBDD
+	 * 
+	 * @param tarea <TareaDTO>
+	 * @return tarea <TareaDTO> añadido con su ID
+	 * @throws Exception
+	 */
+	TareaDTO addTarea(TareaDTO tarea) throws Exception;
+	
+	/**
+	 * Actualiza un registro de tipo <TareaDTO> en BBDD
+	 * 
+	 * @param tarea <TareaDTO>
+	 * @return tarea <TareaDTO> actualizada
+	 * @throws Exception
+	 */
+	TareaDTO updateTarea(TareaDTO tarea) throws Exception;
+	
+	/**
+	 * Elimina un registro de tipo <TareaDTO> en BBDD
+	 * 
+	 * @param tarea <TareaDTO>
+	 * @return 
+	 * @throws Exception
+	 */
+	Boolean deleteTarea(TareaDTO tarea) throws Exception;
+	
+	/**
+	 * Devuelve las tareas asociadas a un grupoTarea pasado por parametro.
+	 * 
+	 * @param grupoTarea <GrupoTareaDTO>
+	 * @return lista de <TareaDTO>
+	 * @throws Exception
+	 */
+	List<TareaDTO> getTareasGrupo(GrupoTareaDTO grupoTarea) throws Exception;
+}

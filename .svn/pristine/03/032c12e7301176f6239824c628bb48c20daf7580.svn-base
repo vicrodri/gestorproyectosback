@@ -1,0 +1,157 @@
+package com.capgemini.gestorproyectos.controller;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.capgemini.gestorproyectos.exceptions.GestorProyectosException;
+import com.capgemini.gestorproyectos.model.ArquitecturaDTO;
+import com.capgemini.gestorproyectos.service.ArquitecturaService;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+
+@Api(value = "ArquitecturaController", description = "ArquitecturaController DESC") 
+@Controller
+@RequestMapping("/rest/arquitectura")
+public class ArquitecturaController extends BaseController{
+	
+	private Logger logger = LoggerFactory.getLogger(ArquitecturaController.class);
+	
+	@Autowired
+	private ArquitecturaService service;
+	
+	@ApiOperation(
+		value = "obtenerArqs", 
+		notes="Devuelve una lista de Arquitecturas en función del filtro pasado como parámetro",
+		responseClass="List<ArquitecturaDTO>")
+	@RequestMapping(value="/obtenerArq", method = RequestMethod.POST)
+	public @ApiResponse(value="Lista de arquitecturas con los resultados") 
+		ResponseEntity<List<ArquitecturaDTO>> obtenerArquitecturas(
+		@ApiParam(value = "Objeto Arquitectura con el filtro a aplicar") 
+		@RequestBody ArquitecturaDTO arquitectura)  throws Exception{
+		logger.info("[INICIO] - obtenerArquitecturas");
+		
+		ResponseEntity<List<ArquitecturaDTO>> response;
+		List<ArquitecturaDTO> lista = null;
+		lista = service.get(arquitectura);
+		response = new ResponseEntity<List<ArquitecturaDTO>>(lista, HttpStatus.OK);
+
+		logger.info("[FIN] - obtenerArquitecturas");
+		
+		return response;
+	}
+	    
+	@ApiOperation(
+		value = "crearArq", 
+		notes="Añade los datos de una arquitectura en BBDD",
+		responseClass="Arquitectura añadida")
+	@RequestMapping(value="/crearArq", method = RequestMethod.POST)
+	public @ApiResponse(value="Arquitectura Añadida")
+		ResponseEntity<ArquitecturaDTO> crearArquitectura(
+			@ApiParam(value = "Objeto Arquitectura a añadir, nombre y cliente obligatorios") 
+			@Valid @RequestBody ArquitecturaDTO arquitectura)  throws Exception{
+		logger.info("[INICIO] - crearArquitectura");
+		
+		if (!this.validarEntrada(arquitectura)) {
+			throw new GestorProyectosException("888","El cliente es obligatorio");
+		}
+		
+		ResponseEntity<ArquitecturaDTO> response;
+		ArquitecturaDTO resultado = service.add(arquitectura);
+		response = new ResponseEntity<ArquitecturaDTO>(resultado, HttpStatus.CREATED);
+
+		logger.info("[FIN] - crearArquitectura");
+		
+		return response;
+	}
+	
+	@ApiOperation(
+		value = "actualizarArquitectura", 
+		notes="Actualiza los datos de una arquitectura en BBDD",
+		responseClass="datos actualizados")
+	@RequestMapping(value="/actualizarArq", method = RequestMethod.PUT)
+	public  @ApiResponse(value="Arquitectura Actualizada") 
+		ResponseEntity<ArquitecturaDTO> actualizarArquitectura(
+			@ApiParam(value = "Objeto Arquitectura a añadir, nombre obligatorio") 
+			@Valid @RequestBody ArquitecturaDTO arquitectura)  throws Exception{
+		logger.info("[INICIO] - actualizarArquitectura");
+		
+		if (!this.validarEntrada(arquitectura)) {
+			throw new GestorProyectosException("888","El cliente es obligatorio");
+		}
+		
+		ResponseEntity<ArquitecturaDTO> response;
+		ArquitecturaDTO resultado = service.update(arquitectura);
+		response = new ResponseEntity<ArquitecturaDTO>(resultado, HttpStatus.CREATED);
+
+		logger.info("[FIN] - actualizarArquitectura");
+		
+		return response;
+	}
+	
+	@ApiOperation(
+		value = "eliminarArq", 
+		notes="Elimina los datos de una arquitectura en BBDD",
+		responseClass="flag borrado correcto")
+	@RequestMapping(value="/eliminarArq", method = RequestMethod.DELETE)
+	public @ApiResponse(value="Flag Borrado") 
+		ResponseEntity<Boolean> eliminarArquitectura(
+			@ApiParam(value = "Objeto Arquitectura a eliminar") 
+			@RequestBody ArquitecturaDTO arquitectura) throws Exception{
+		logger.info("[INICIO] - eliminarArquitectura");
+		
+		ResponseEntity<Boolean> response;
+		Boolean resultado = Boolean.FALSE;
+		resultado = service.delete(arquitectura);
+		response = new ResponseEntity<Boolean>(resultado, HttpStatus.OK);
+		
+		logger.info("[FIN] - eliminarArquitectura");
+		
+		return response;
+	}
+
+	@ApiOperation(
+			value = "getAllArq", 
+			notes="Devuelve una lista de arquitecturas para cargar desplegables",
+			responseClass="List<ArquitecturaDTO>")
+		@RequestMapping(value="/getAllArq", method = RequestMethod.GET)
+		public @ApiResponse(value="Lista de arquitecturas con los resultados") 
+			ResponseEntity<List<ArquitecturaDTO>> getAllClientes()  throws Exception{
+			logger.info("[INICIO] - getAllArq");
+			
+			ResponseEntity<List<ArquitecturaDTO>> response;
+			List<ArquitecturaDTO> lista = service.getAll();
+			response = new ResponseEntity<List<ArquitecturaDTO>>(lista, HttpStatus.OK);
+
+			logger.info("[FIN] - getAllArq");
+			
+			return response;
+		}
+	
+	/**
+	 * Validacion de entrada
+	 * 
+	 * @param arquitectura
+	 * @return
+	 * @throws Exception
+	 */
+	private Boolean validarEntrada(ArquitecturaDTO arquitectura) throws Exception{
+		if (arquitectura.getCliente() != null && 
+				arquitectura.getCliente().getId() != null) {
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
+	}
+}

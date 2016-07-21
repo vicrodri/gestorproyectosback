@@ -1,0 +1,98 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.capgemini.gestorproyectos.dao.TecnologiaDAO">
+
+	<resultMap id="tecnologiaArqMap" type="com.capgemini.gestorproyectos.model.TecnologiaDTO">
+	  <id property="id" column="idTecnologia" />
+	  <result property="nombre" column="nombre"/>
+	  <result property="lenguaje" column="lenguaje"/>
+	  <result property="capa" column="capa"/>
+	  <collection property="arquitecturas" ofType="com.capgemini.gestorproyectos.model.ArquitecturaDTO">
+	    <id column="idArquitectura" property="id" javaType="long"/>
+	    <result column="nombreArq" property="nombre" javaType="string"/>
+	  </collection>
+	</resultMap>
+  
+  <resultMap id="tecnologiaMap" type="com.capgemini.gestorproyectos.model.TecnologiaDTO">
+	  <id property="id" column="idTecnologia" />
+	  <result property="nombre" column="nombre"/>
+	  <result property="lenguaje" column="lenguaje"/>
+	  <result property="capa" column="capa"/>
+	</resultMap>
+
+  <select id="get" resultMap="tecnologiaArqMap"
+  	parameterType="com.capgemini.gestorproyectos.model.TecnologiaDTO" >
+  	<if test="nombre!=null">
+      <bind name="patronNombre" value="'%' + _parameter.getNombre() + '%'" />
+    </if>
+    <if test="lenguaje!=null">
+      <bind name="patronLenguaje" value="'%' + _parameter.getLenguaje() + '%'" />
+    </if>
+    <if test="capa!=null">
+      <bind name="patronCapa" value="'%' + _parameter.getCapa() + '%'" />
+    </if>
+  	select tec.idTecnologia, tec.nombre, tec.lenguaje, tec.capa, arq.idArquitectura, arq.nombre as nombreArq 
+  	from tecnologias tec
+		left join arquitecturas_tecnologias arqtec
+		on tec.idTecnologia = arqTec.idTecnologia
+		left join arquitecturas arq
+		on arqTec.idArquitectura = arq.idArquitectura
+	  <where>
+      <choose>
+        <when test="id!=null">
+          and tec.idTecnologia = #{id}
+        </when>
+        <when test="nombre!=null or lenguaje != null or capa != null">
+          <if test="nombre!=null">and tec.nombre like #{patronNombre}</if>
+          <if test="lenguaje!=null">and tec.lenguaje like #{patronLenguaje}</if>
+          <if test="capa!=null">and tec.capa like #{patronCapa}</if>
+        </when>
+      </choose>
+    </where>
+    order by tec.idTecnologia
+  </select>
+
+  <insert id="add" parameterType="com.capgemini.gestorproyectos.model.TecnologiaDTO"   
+    useGeneratedKeys="true" keyProperty="id">
+    insert into tecnologias (
+      capa,
+      lenguaje,
+      nombre
+    ) values (
+      #{capa},
+      #{lenguaje},
+      #{nombre}
+    )
+  </insert>
+  
+  <update id="update" parameterType="com.capgemini.gestorproyectos.model.TecnologiaDTO">
+    update tecnologias set
+    <if test="null != nombre">
+      nombre = #{nombre},
+    </if>
+    <if test="null != lenguaje">
+      lenguaje = #{lenguaje},
+    </if>
+    <if test="null != capa">
+      capa = #{capa}
+    </if>
+    where idTecnologia = #{id}
+  </update>
+  
+  <delete id="delete" parameterType="com.capgemini.gestorproyectos.model.TecnologiaDTO">
+    delete from tecnologias where idTecnologia = #{id} 
+  </delete> 
+    
+  <select id="getTecnologiasArquitectura" resultMap="tecnologiaMap"
+    parameterType="com.capgemini.gestorproyectos.model.ArquitecturaDTO">
+    select tec.* from tecnologias tec, arquitecturas_tecnologias arqtec 
+    where tec.idTecnologia = arqtec.idTecnologia and arqtec.idArquitectura = #{id}
+    order by tec.idTecnologia
+  </select>
+  
+  <select id="getTecnologiasItem" resultMap="tecnologiaMap"
+    parameterType="com.capgemini.gestorproyectos.model.ItemDTO">
+    select tec.* from tecnologias tec, items_tecnologias itemtec 
+    where tec.idTecnologia = itemtec.idTecnologia and itemtec.idItem = #{id}
+    order by tec.idTecnologia
+  </select>
+</mapper>

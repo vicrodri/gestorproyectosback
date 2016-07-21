@@ -1,0 +1,43 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.capgemini.gestorproyectos.dao.TamanioDAO">
+  
+	<resultMap type="com.capgemini.gestorproyectos.model.TamanioDTO" id="TamanioMap">
+	  <id column="idTamanio" property="id" javaType="long"/>
+	  <result column="descripcion" property="descripcion" javaType="string"/>
+	</resultMap>
+  
+  <select id="get" resultMap="TamanioMap"
+  parameterType="com.capgemini.gestorproyectos.model.TamanioDTO">
+    select * from tamanios 
+    <if test="id!=null"> where idTamanio=#{id}</if>
+    order by idTamanio
+  </select>
+  
+  <select id="getAll" resultMap="TamanioMap">
+    select * from tamanios 
+    order by idTamanio
+  </select>
+  
+  <insert id="add" parameterType="com.capgemini.gestorproyectos.model.TamanioDTO"   
+    useGeneratedKeys="true" keyProperty="id">
+    insert into tamanios (
+      descripcion
+    )
+    values (
+      #{descripcion}
+    )
+  </insert>
+  
+  <update id="update" parameterType="com.capgemini.gestorproyectos.model.TamanioDTO">
+    update tamanios set
+      <if test='descripcion!=null'>
+        descripcion=#{descripcion}
+      </if>
+    where idTamanio = #{id}
+  </update>
+  
+  <delete id="delete" parameterType="com.capgemini.gestorproyectos.model.TamanioDTO">
+    delete from tamanios where idTamanio = #{id}
+  </delete> 
+    
+</mapper>

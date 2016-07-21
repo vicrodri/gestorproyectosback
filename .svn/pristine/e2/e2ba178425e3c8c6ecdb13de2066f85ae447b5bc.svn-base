@@ -1,0 +1,47 @@
+package com.capgemini.gestorproyectos.dao;
+
+import java.util.List;
+
+import com.capgemini.gestorproyectos.model.TamanioDTO;
+
+/**
+ * DAO para las operaciones de BBDD de la tabla Tamanios
+ * mapea al fichero TamanioMapper.xml
+ * @author capgemini
+ *
+ */
+public interface TamanioDAO {
+	
+	/**
+	 * Devuelve los registros de la tabla Tamanios.
+	 * 
+	 * @param tamanio <TamanioDTO>
+	 * @return lista de <Cliente>
+	 */
+	List<TamanioDTO> get(TamanioDTO tamanio);
+
+	/**
+	 * Crear una tamanio <TamanioDTO>
+	 * 
+	 * @param tamanio <TamanioDTO>
+	 * @return tamanio <TamanioDTO> creado
+	 */
+	Long add(TamanioDTO tamanio);
+
+	/**
+	 * Actualiza un tamanio <TamanioDTO>
+	 * 
+	 * @param tamanio <TamanioDTO>
+	 * @return
+	 */
+	Long update(TamanioDTO tamanio);
+
+	/**
+	 * elimina un tamanio <TamanioDTO>
+	 * 
+	 * @param tamanio <TamanioDTO>
+	 * @return
+	 */
+	Long delete(TamanioDTO tamanio);
+
+}

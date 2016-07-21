@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    
+  <!--  Mapper files --> 
+  <bean id="ClienteMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+    <property name="mapperInterface" value="com.capgemini.gestorproyectos.dao.ClienteDAO" />
+    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+  </bean>
+  
+  <bean id="ArquitecturaMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+    <property name="mapperInterface" value="com.capgemini.gestorproyectos.dao.ArquitecturaDAO" />
+    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+  </bean>
+  
+  <bean id="TecnologiaMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+    <property name="mapperInterface" value="com.capgemini.gestorproyectos.dao.TecnologiaDAO" />
+    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+  </bean>
+  
+  <bean id="ItemMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+    <property name="mapperInterface" value="com.capgemini.gestorproyectos.dao.ItemDAO" />
+    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+  </bean>
+  
+  <bean id="ComplejidadMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+    <property name="mapperInterface" value="com.capgemini.gestorproyectos.dao.ComplejidadDAO" />
+    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+  </bean>
+  
+  <bean id="TamanioMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+    <property name="mapperInterface" value="com.capgemini.gestorproyectos.dao.TamanioDAO" />
+    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+  </bean>
+  
+  <bean id="GrupoTareaMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+    <property name="mapperInterface" value="com.capgemini.gestorproyectos.dao.GrupoTareaDAO" />
+    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+  </bean>
+  
+  <bean id="TareaMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+    <property name="mapperInterface" value="com.capgemini.gestorproyectos.dao.TareaDAO" />
+    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+  </bean>
+  
+  <bean id="PersonaMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+    <property name="mapperInterface" value="com.capgemini.gestorproyectos.dao.PersonaDAO" />
+    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+  </bean>
+  
+  <bean id="ProyectoMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+    <property name="mapperInterface" value="com.capgemini.gestorproyectos.dao.ProyectoDAO" />
+    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+  </bean>
+  
+  <bean id="RolMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+    <property name="mapperInterface" value="com.capgemini.gestorproyectos.dao.RolDAO" />
+    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+  </bean>
+  
+  <bean id="AsignacionMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+    <property name="mapperInterface" value="com.capgemini.gestorproyectos.dao.AsignacionDAO" />
+    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+  </bean>
+</beans>

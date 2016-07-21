@@ -1,0 +1,99 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.capgemini.gestorproyectos.dao.ProyectoDAO">
+  
+	<resultMap type="com.capgemini.gestorproyectos.model.ProyectoDTO" id="proyectoMap">
+	  <id column="idProyecto" property="id" javaType="long"/>
+	  <result column="nombreProyecto" property="nombre" javaType="string"/>
+	  <result column="descProyecto" property="descripcion" javaType="string"/>
+	  <result column="fechaInicio" property="fechaInicio" javaType="date"/>
+	  <result column="fechaFin" property="fechaFin" javaType="date"/>
+	  <result column="cerrado" property="cerrado" javaType="boolean"/>
+	  <association property="cliente" javaType="com.capgemini.gestorproyectos.model.ClienteDTO" >
+      <id column="idCliente" property="id" javaType="long"/>
+      <result column="nombreCliente" property="nombre" javaType="string"/>
+      <result column="descripcion" property="descripcion" javaType="string"/>
+    </association>
+	</resultMap>
+     
+  <resultMap type="com.capgemini.gestorproyectos.model.ProyectoDTO" id="proyectoSimpleMap">
+    <id column="idProyecto" property="id" javaType="long"/>
+    <result column="nombre" property="nombre" javaType="string"/>
+    <result column="descripcion" property="descripcion" javaType="string"/>
+    <result column="fechaInicio" property="fechaInicio" javaType="date"/>
+    <result column="fechaFin" property="fechaFin" javaType="date"/>
+    <result column="cerrado" property="cerrado" javaType="boolean"/>
+  </resultMap>
+  
+  <select id="get" resultMap="proyectoMap" 
+    parameterType="com.capgemini.gestorproyectos.model.ProyectoDTO">
+    <if test="nombre!=null">
+      <bind name="patronNombre" value="'%' + _parameter.getNombre() + '%'" />
+    </if>
+    select proy.idProyecto, proy.nombre as nombreProyecto, 
+    proy.descripcion as descProyecto, proy.fechaInicio, proy.fechaFin, proy.cerrado, 
+    cli.idCliente, cli.nombre as nombreCliente, cli.descripcion as descCliente 
+    from proyectos proy, clientes cli where proy.idCliente = cli.idCliente
+    <choose>
+      <when test="id!=null">
+         and proy.idProyecto = #{id}
+       </when>
+       <when test="nombre!=null or cerrado!=null or cliente != null">
+         <if test="nombre!=null">and proy.nombre like #{patronNombre}</if>
+         <if test="cerrado!=null">
+	         <choose>
+	          <when test="cerrado">and cerrado = 1</when>
+	          <otherwise>and cerrado = 0</otherwise>
+	         </choose>
+         </if>
+         <if test="cliente != null and cliente.id !=null">and cli.idCliente = #{cliente.id}</if>
+      </when>
+    </choose>
+    order by proy.idProyecto
+  </select>
+  
+  <insert id="add" parameterType="com.capgemini.gestorproyectos.model.ProyectoDTO"   
+    useGeneratedKeys="true" keyProperty="id">
+    insert into proyectos (
+      nombre,
+      <if test="cliente != null and cliente.id !=null">idCliente,</if>
+      descripcion,
+      fechaInicio,
+      fechaFin,
+      cerrado
+    )
+    values (
+      #{nombre},
+      <if test="cliente != null and cliente.id !=null">#{cliente.id},</if>
+      #{descripcion},
+      #{fechaInicio},
+      #{fechaFin},
+      0
+    )
+  </insert>
+  
+  <update id="update" parameterType="com.capgemini.gestorproyectos.model.ProyectoDTO">
+    update proyectos set
+      <if test='nombre!=null'>
+        nombre=#{nombre},
+      </if>
+      <if test='descripcion!=null'>
+        descripcion=#{descripcion},
+      </if>
+      <if test='fechaInicio!=null'>
+        fechaInicio=#{fechaInicio},
+      </if>
+      <if test='fechaFin!=null'>
+        fechaFin=#{fechaFin},
+      </if>
+      <if test='cerrado!=null'>
+        cerrado=#{cerrado},
+      </if>
+       <if test="cliente != null and cliente.id !=null">idCliente=#{cliente.id}</if>
+    where idProyecto = #{id}
+  </update>
+  
+  <select id="getProyectosCliente" resultMap="proyectoSimpleMap"
+    parameterType="com.capgemini.gestorproyectos.model.ClienteDTO">
+    select * from proyectos where idCliente = #{cliente.id}
+  </select>
+</mapper>

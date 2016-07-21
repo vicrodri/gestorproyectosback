@@ -1,0 +1,143 @@
+package com.capgemini.gestorproyectos.controller;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.capgemini.gestorproyectos.exceptions.GestorProyectosException;
+import com.capgemini.gestorproyectos.model.TareaDTO;
+import com.capgemini.gestorproyectos.service.TareaService;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+
+@Api(value = "TareaController", description = "TareaController DESC") 
+@Controller
+@RequestMapping("/rest/tarea")
+public class TareaController extends BaseController{
+	
+	private Logger logger = LoggerFactory.getLogger(TareaController.class);
+	
+	@Autowired
+	private TareaService service;
+	
+	@ApiOperation(
+		value = "obtenerTareas", 
+		notes="Devuelve una lista de tareas en función del filtro pasado como parámetro",
+		responseClass="List<TareaDTO>")
+	@RequestMapping(value="/obtenerTareas", method = RequestMethod.POST)
+	public @ApiResponse(value="Lista de Tareas con los resultados") 
+		ResponseEntity<List<TareaDTO>> obtenerTareas(
+		@ApiParam(value = "Objeto Tarea con el filtro a aplicar") 
+		@RequestBody TareaDTO tarea)  throws Exception{
+		logger.info("[INICIO] - obtenerTareas");
+		
+		ResponseEntity<List<TareaDTO>> response;
+		List<TareaDTO> lista = service.getTareas(tarea);
+		response = new ResponseEntity<List<TareaDTO>>(lista, HttpStatus.OK);
+
+		logger.info("[FIN] - obtenerTareas");
+		
+		return response;
+	}
+	    
+	@ApiOperation(
+		value = "crearTarea", 
+		notes="Añade los datos de una tarea en BBDD",
+		responseClass="Tarea añadida")
+	@RequestMapping(value="/crearTarea", method = RequestMethod.POST)
+	public @ApiResponse(value="Tarea")
+		ResponseEntity<TareaDTO> crearTarea(
+			@ApiParam(value = "Objeto Tarea a añadir - nombre, arquitectura, item, complejidad y tamaño son obligatorios") 
+			@Valid @RequestBody TareaDTO tarea)  throws Exception{
+		logger.info("[INICIO] - crearTarea");
+		
+		if (!this.validarEntrada(tarea)) {
+			throw new GestorProyectosException("888","El nombre, horas, arquitectura, item, complejidad y tamaño son obligatorios");
+		}
+		
+		ResponseEntity<TareaDTO> response;
+		TareaDTO resultado = service.addTarea(tarea);
+		response = new ResponseEntity<TareaDTO>(resultado, HttpStatus.CREATED);
+
+		logger.info("[FIN] - crearTarea");
+		
+		return response;
+	}
+	
+	@ApiOperation(
+		value = "actualizarTarea", 
+		notes="Actualiza los datos de una tarea en BBDD",
+		responseClass="datos actualizados")
+	@RequestMapping(value="/actualizarTarea", method = RequestMethod.PUT)
+	public  @ApiResponse(value="Tarea Actualizada") 
+		ResponseEntity<TareaDTO> actualizarTarea(
+			@ApiParam(value = "Objeto Tarea a actualizar - nombre, horas, arquitectura, item, complejidad y tamaño son obligatorios") 
+			@Valid @RequestBody TareaDTO tarea)  throws Exception{
+		logger.info("[INICIO] - actualizarTarea");
+
+		if (!this.validarEntrada(tarea)) {
+			throw new GestorProyectosException("888","El nombre, horas, arquitectura, item, complejidad y tamaño son obligatorios");
+		}
+		
+		ResponseEntity<TareaDTO> response;
+		TareaDTO resultado = service.updateTarea(tarea);
+		response = new ResponseEntity<TareaDTO>(resultado, HttpStatus.CREATED);
+
+		logger.info("[FIN] - actualizarTarea");
+		
+		return response;
+	}
+	@ApiOperation(
+		value = "eliminarTarea", 
+		notes="Elimina los datos de una tarea en BBDD",
+		responseClass="flag borrado correcto")
+	@RequestMapping(value="/eliminarTarea", method = RequestMethod.DELETE)
+	public @ApiResponse(value="Flag Borrado") 
+		ResponseEntity<Boolean> eliminarTarea(
+			@ApiParam(value = "Objeto Tarea a eliminar") 
+			@RequestBody TareaDTO tarea) throws Exception{
+		logger.info("[INICIO] - eliminarTarea");
+		
+		ResponseEntity<Boolean> response;
+		Boolean resultado = Boolean.FALSE;
+		resultado = service.deleteTarea(tarea);
+		response = new ResponseEntity<Boolean>(resultado, HttpStatus.OK);
+		
+		logger.info("[FIN] - eliminarTarea");
+		
+		return response;
+	}
+	
+	/**
+	 * Validacion de entrada
+	 * 
+	 * @param arquitectura
+	 * @return
+	 * @throws Exception
+	 */
+	private Boolean validarEntrada(TareaDTO tarea) throws Exception{
+		if (tarea.getGrupoTarea().getArquitectura() != null && 
+				tarea.getGrupoTarea().getComplejidad() != null 
+				&& tarea.getGrupoTarea().getItem() != null && 
+				tarea.getGrupoTarea().getTamanio() != null) {
+			if (tarea.getGrupoTarea().getArquitectura().getId() != null && 
+					tarea.getGrupoTarea().getComplejidad().getId() != null && 
+					tarea.getGrupoTarea().getItem().getId() != null && 
+					tarea.getGrupoTarea().getTamanio().getId() != null)
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
+	}
+}

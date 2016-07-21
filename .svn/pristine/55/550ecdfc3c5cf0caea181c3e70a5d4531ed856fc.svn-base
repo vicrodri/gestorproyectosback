@@ -1,0 +1,47 @@
+package com.capgemini.gestorproyectos.dao;
+
+import java.util.List;
+
+import com.capgemini.gestorproyectos.model.RolDTO;
+
+/**
+ * DAO para las operaciones de BBDD de la tabla Roles
+ * mapea al fichero RolMapper.xml
+ * @author capgemini
+ *
+ */
+public interface RolDAO {
+	
+	/**
+	 * Devuelve los registros de la tabla Roles.
+	 * 
+	 * @param rol <RolDTO>
+	 * @return lista de <RolDTO>
+	 */
+	List<RolDTO> get(RolDTO rol);
+
+	/**
+	 * Crear un rol <RolDTO>
+	 * 
+	 * @param rol <RolDTO>
+	 * @return rol <RolDTO> creado
+	 */
+	Long add(RolDTO rol);
+
+	/**
+	 * Actualiza un rol <RolDTO>
+	 * 
+	 * @param rol <RolDTO>
+	 * @return
+	 */
+	Long update(RolDTO rol);
+
+	/**
+	 * elimina un rol <RolDTO>
+	 * 
+	 * @param rol <RolDTO>
+	 * @return
+	 */
+	Long delete(RolDTO rol);
+
+}

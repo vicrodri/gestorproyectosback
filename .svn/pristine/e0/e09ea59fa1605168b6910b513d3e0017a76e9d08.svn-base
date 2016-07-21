@@ -1,0 +1,70 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.capgemini.gestorproyectos.dao.EntregaDAO">
+  
+	<resultMap type="com.capgemini.gestorproyectos.model.EntregaDTO" id="entregaMap">
+	  <id column="idEntrega" property="idEntrega" javaType="int"/>
+	  <result column="comentarios" property="comentarios" javaType="string"/>
+	  <result column="fechaEntrega" property="fechaEntrega" javaType="date"/>
+	  <association property="proyecto" javaType="com.capgemini.gestorproyectos.model.ProyectoDTO" >
+      <id column="idProyecto" property="id" javaType="long"/>
+    <result column="nombre" property="nombre" javaType="string"/>
+    
+    </association>
+	</resultMap>
+	
+	
+    <select id="getAllEntregas" resultMap="entregaMap">
+   select * from entrega entr left join proyectos p on p.idProyecto=entr.idProyecto
+    </select>
+    <select id="get" resultMap="entregaMap" parameterType="com.capgemini.gestorproyectos.model.FilterEntrega">
+    
+    select * from entrega 
+    </select>
+    <update id="update" parameterType="com.capgemini.gestorproyectos.model.EntregaDTO">
+    
+    update entrega 
+       <set>
+    <if test="comentarios!=null">
+   comentarios=#{comentarios},
+    </if>
+    <if test="fechaEntrega!=null">
+     fechaEntrega=#{fechaEntrega},
+    </if>
+    <if test="proyecto!=null">
+    	idProyecto=#{proyecto.id}
+   
+    </if>
+    </set>
+   where idEntrega=#{idEntrega}
+    
+    </update>
+    <delete id="delete" parameterType="com.capgemini.gestorproyectos.model.EntregaDTO">
+    delete from entrega where idEntrega=#{idEntrega}
+    
+    </delete>
+    <insert keyColumn="idEntrega" id="add" useGeneratedKeys="true" keyProperty="idEntrega" parameterType="com.capgemini.gestorproyectos.model.EntregaDTO">
+    insert into entrega(comentarios,fechaEntrega,idProyecto)
+    values(#{comentarios},#{fechaEntrega},#{proyecto.id})
+    </insert>
+    <select id="getByDate" resultMap="entregaMap" parameterType="com.capgemini.gestorproyectos.model.FilterEntrega">
+       select * from entrega
+       <where>
+       <choose>
+        <when test="from!=null and to!=null">
+      fechaEntrega between #{from} and #{to}
+      </when>
+     <when test="from!=null">
+   		  fechaEntrega>=#{from}
+   		</when>
+       </choose>
+        <if test="proyecto!=null">
+  and idProyecto=#{proyecto.id}
+    </if>
+    <if test="idEntrega!=null">
+  and  idEntrega=#{idEntrega}
+    </if>
+       </where>
+  
+    
+    </select>
+    </mapper>

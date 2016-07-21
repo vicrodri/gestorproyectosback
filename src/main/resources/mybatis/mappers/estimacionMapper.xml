@@ -1,0 +1,74 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.capgemini.gestorproyectos.dao.estimacionDAO">
+
+<resultMap type="com.capgemini.gestorproyectos.model.estimacionDTO" id="listMap">
+<id property="id" column="idEstimacion" javaType="long"/>
+<result column="comentarios"  property="comentarios" javaType="string"/>
+<result column="fechaRealizacion" property="fechaRealizacion" javaType="date"></result>
+<association property="proyecto" column="idProyecto" javaType="com.capgemini.gestorproyectos.model.ProyectoDTO">
+<id column="idProyecto" property="id"/>
+<result column="nombre" property="nombre"/>
+</association>
+<association property="estimadoPor" column="idPersona" javaType="com.capgemini.gestorproyectos.model.PersonaDTO">
+<id column="idPersona" property="id"/>
+<result column="nombre" property="nombre" javaType="string"/>
+<result column="apellido1" property="primerApellido" javaType="string"></result>
+<result column="apellido2" property="segundoApellido" javaType="string"></result>
+
+</association>
+</resultMap>
+
+<select id="getAllEstimaciones" resultMap="listMap">
+select * from estimacion
+</select>
+<insert id="add" useGeneratedKeys="true" keyProperty="id" parameterType="com.capgemini.gestorproyectos.model.estimacionDTO">
+insert into estimacion(idProyecto,fechaRealizacion,estimadoPor,comentarios)
+values(#{proyecto.id},#{fechaRealizacion},#{estimadoPor.id},#{comentarios})
+</insert>
+<select  id="filtrarEstimacion" resultMap="listMap" parameterType="com.capgemini.gestorproyectos.model.FilterEstimacion">
+select idEstimacion,comentarios,fechaRealizacion,proy.idProyecto,proy.nombre,per.idPersona,per.nombre,per.apellido1,per.apellido2
+
+from estimacion est,proyectos proy,personas per
+
+<where>
+<choose>
+<when test="from!=null and to!=null">
+fechaRealizacion between #{from} and #{to} and
+</when>
+
+<when test="persona!=null and from==null">
+estimadoPor=#{persona.id} and</when>
+<otherwise>
+
+fechaRealizacion >= #{from} and
+</otherwise>
+</choose>
+
+proy.idProyecto=est.idProyecto
+</where>
+
+
+</select>
+
+<update id="update" >
+update estimacion
+<set>
+<if test="proyecto!=null">
+idProyecto=#{proyecto.id},
+</if>
+<if test="fechaRealizacion!=null">
+fechaRealizacion=#{fechaRealizacion},
+</if>
+<if test="estimadoPor!=null">
+estimadoPor=#{estimadoPor.id},
+</if>
+<if test="comentarios!=null">
+comentarios=#{comentarios},
+</if>
+</set>
+where idEstimacion=#{id}
+</update>
+<delete id="delete" parameterType="com.capgemini.gestorproyectos.model.estimacionDTO">
+delete from estimacion where idEstimacion=#{id}
+</delete>
+</mapper>

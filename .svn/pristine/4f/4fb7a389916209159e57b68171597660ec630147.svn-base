@@ -1,0 +1,74 @@
+package com.capgemini.gestorproyectos.service.impl;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.capgemini.gestorproyectos.dao.GrupoTareaDAO;
+import com.capgemini.gestorproyectos.exceptions.GestorProyectosException;
+import com.capgemini.gestorproyectos.model.ComplejidadDTO;
+import com.capgemini.gestorproyectos.model.GrupoTareaDTO;
+import com.capgemini.gestorproyectos.model.TamanioDTO;
+import com.capgemini.gestorproyectos.service.GrupoTareaService;
+import com.capgemini.gestorproyectos.service.TareaService;
+
+@Service
+public class GrupoTareaServiceImpl implements GrupoTareaService {
+
+	@Autowired
+	private GrupoTareaDAO grupoTareaDAO;
+
+	@Autowired
+	private TareaService tareaService;
+	
+	private Logger logger = LoggerFactory.getLogger(GrupoTareaServiceImpl.class);
+
+	public List<GrupoTareaDTO> getGrupoTareas(GrupoTareaDTO grupoTarea) throws Exception {
+		logger.debug("[INICIO] - getGrupoTareas - Filtro: - " + grupoTarea.toString());
+		return this.grupoTareaDAO.get(grupoTarea);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public GrupoTareaDTO addGrupoTarea(GrupoTareaDTO grupoTarea) throws Exception {
+		logger.debug("[INICIO] - addGrupoTarea - GrupoTarea: - " + grupoTarea.toString());
+		this.grupoTareaDAO.add(grupoTarea);
+		return grupoTarea;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public GrupoTareaDTO updateGrupoTarea(GrupoTareaDTO grupoTarea) throws Exception {
+		logger.debug("[INICIO] - updateGrupoTarea - GrupoTarea: - " + grupoTarea.toString());
+		this.grupoTareaDAO.update(grupoTarea);
+		return grupoTarea;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public Boolean deleteGrupoTarea(GrupoTareaDTO grupoTarea) throws Exception {
+		logger.debug("[INICIO] - deleteGrupoTarea - GrupoTarea: - " + grupoTarea.toString());
+		
+		if (!this.tareaService.getTareasGrupo(grupoTarea).isEmpty()) {
+			throw new GestorProyectosException(
+					"000", "No se puede eliminar un registro asociado a una tarea");
+		}
+		if (this.grupoTareaDAO.delete(grupoTarea) == 0) {
+			throw new GestorProyectosException("000", "El registro a eliminar no existe");
+		}
+		return Boolean.TRUE;
+	}
+
+	public List<GrupoTareaDTO> getGruposComplejidad(ComplejidadDTO complejidad) throws Exception {
+		logger.debug("[INICIO] - getGruposComplejidad - Complejidad: - " + complejidad.toString());
+		return this.grupoTareaDAO.getGruposComplejidad(complejidad);
+	}
+
+	public List<GrupoTareaDTO> getGruposTamanio(TamanioDTO tamanio) throws Exception {
+		logger.debug("[INICIO] - getGruposTamanio - Tamanio: - " + tamanio.toString());
+		return this.grupoTareaDAO.getGruposTamanio(tamanio);
+	}
+	
+}

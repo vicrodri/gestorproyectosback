@@ -1,0 +1,63 @@
+package com.capgemini.gestorproyectos.service;
+
+import java.util.List;
+
+import com.capgemini.gestorproyectos.model.ArquitecturaDTO;
+import com.capgemini.gestorproyectos.model.ItemDTO;
+import com.capgemini.gestorproyectos.model.TecnologiaDTO;
+
+public interface TecnologiaService {
+
+	/**
+	 * Recupera una lista de tecnologias en funcion del filtro indicado.
+	 * 
+	 * @param tecnologia <TecnologiaDTO>
+	 * @return lista de <TecnologiaDTO>
+	 * @throws Exception
+	 */
+	List<TecnologiaDTO> getTecnologias(TecnologiaDTO tecnologia) throws Exception;
+	
+	/**
+	 * Crea un registro de tipo <TecnologiaDTO> en BBDD
+	 * 
+	 * @param tecnologia <TecnologiaDTO>
+	 * @return tecnologia <TecnologiaDTO> añadida con su ID
+	 * @throws Exception
+	 */
+	TecnologiaDTO addTecnologia(TecnologiaDTO tecnologia) throws Exception;
+	
+	/**
+	 * Actualiza un registro de tipo <TecnologiaDTO> en BBDD
+	 * 
+	 * @param tecnologia <TecnologiaDTO>
+	 * @return 
+	 * @throws Exception
+	 */
+	TecnologiaDTO updateTecnologia(TecnologiaDTO tecnologia) throws Exception;
+	
+	/**
+	 * Elimina un registro de tipo <TecnologiaDTO> en BBDD
+	 * 
+	 * @param tecnologia <TecnologiaDTO>
+	 * @return 
+	 * @throws Exception
+	 */
+	Boolean deleteTecnologia(TecnologiaDTO tecnologia) throws Exception;
+	
+	/**
+	 * Devuelve las tecnologias asociadas a una arquitectura pasada por parametro.
+	 * 
+	 * @param arquitectura <ArquitecturaDTO>
+	 * @return lista de <TecnologiaDTO>
+	 * @throws Exception
+	 */
+	List<TecnologiaDTO> getTecnologiasArquitectura(ArquitecturaDTO arquitectura) throws Exception;
+
+	/**
+	 * Devuelve las tecnologias asociadas a un item pasado por parametro.
+	 * 
+	 * @param item <ItemDTO>
+	 * @return lista de <TecnologiaDTO>
+	 */
+	List<TecnologiaDTO> getTecnologiasItem(ItemDTO item);
+}

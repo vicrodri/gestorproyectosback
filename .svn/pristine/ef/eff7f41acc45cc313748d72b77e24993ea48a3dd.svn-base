@@ -1,0 +1,86 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.capgemini.gestorproyectos.dao.ArquitecturaDAO">
+  
+	<resultMap type="com.capgemini.gestorproyectos.model.ArquitecturaDTO" id="arquitecturaMap">
+	  <id column="idArquitectura" property="id" javaType="long"/>
+	  <result column="nombre" property="nombre" javaType="string"/>
+	  <association property="cliente" javaType="com.capgemini.gestorproyectos.model.ClienteDTO" >
+      <id column="idCliente" property="id" javaType="long"/>
+      <result column="nombreCliente" property="nombre" javaType="string"/>
+      <result column="descripcion" property="descripcion" javaType="string"/>
+    </association>
+	</resultMap>
+    
+  <resultMap type="com.capgemini.gestorproyectos.model.ArquitecturaDTO" id="arqMap">
+    <id column="idArquitectura" property="id" javaType="long"/>
+    <result column="nombre" property="nombre" javaType="string"/>
+    <result column="idCliente" property="cliente.idCliente" javaType="Long"/>
+  </resultMap>
+  
+  <select id="get" resultMap="arquitecturaMap" 
+    parameterType="com.capgemini.gestorproyectos.model.ArquitecturaDTO">
+    <if test="nombre!=null">
+      <bind name="patronNombre" value="'%' + _parameter.getNombre() + '%'" />
+    </if>
+    select arq.idArquitectura, arq.nombre, cli.idCliente, 
+    cli.nombre as nombreCliente, cli.descripcion  
+    from arquitecturas arq left join clientes cli 
+    on arq.idCliente = cli.idCliente
+    <where>
+      <choose>
+        <when test="id!=null">
+          and arq.idArquitectura = #{id}
+        </when>
+        <when test="nombre!=null or cliente != null and cliente.id != null">
+          <if test="nombre!=null">and arq.nombre like #{patronNombre}</if>
+          <if test="cliente != null and cliente.id !=null">and cli.idCliente = #{cliente.id}</if>  
+	      </when>
+	    </choose>
+    </where>
+    order by arq.idArquitectura
+  </select>
+  
+  <select id="getAllArq" resultMap="arqMap" >
+    select * from arquitecturas order by idArquitectura
+  </select>
+
+  <insert id="add" parameterType="com.capgemini.gestorproyectos.model.ArquitecturaDTO"   
+    useGeneratedKeys="true" keyProperty="id">
+    insert into arquitecturas (
+      nombre,
+      idCliente
+    )
+    values (
+      #{nombre},
+      #{cliente.id}
+    )
+  </insert>
+  
+  <update id="update" parameterType="com.capgemini.gestorproyectos.model.ArquitecturaDTO">
+    update arquitecturas set
+      <if test='nombre!=null'>
+        nombre=#{nombre},
+      </if>
+      <if test='cliente != null and cliente.id!=null'>
+        idCliente=#{cliente.id}
+      </if>
+    where idArquitectura = #{id}
+  </update>
+  
+  <delete id="delete" parameterType="com.capgemini.gestorproyectos.model.ArquitecturaDTO">
+    delete from arquitecturas where idArquitectura = #{id}
+  </delete> 
+    
+  <select id="getArquitecturasCliente" resultMap="arqMap" 
+    parameterType="com.capgemini.gestorproyectos.model.ClienteDTO">
+    select * from arquitecturas where idCliente= #{id} 
+    order by idArquitectura
+  </select>  
+  
+  <select id="getArquitecturasTecnologia" resultMap="arqMap"
+    parameterType="com.capgemini.gestorproyectos.model.TecnologiaDTO">
+    select arq.* from arquitecturas arq, arquitecturas_tecnologias arqtec 
+    where arq.idArquitectura = arqtec.idArquitectura and arqtec.idTecnologia = #{id}
+    order by arq.idArquitectura
+  </select>
+</mapper>

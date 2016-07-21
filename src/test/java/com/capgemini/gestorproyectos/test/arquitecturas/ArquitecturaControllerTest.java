@@ -1,0 +1,182 @@
+/**
+ * 
+ */
+package com.capgemini.gestorproyectos.test.arquitecturas;
+
+import static org.junit.Assert.fail;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import org.h2.engine.User;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+
+import com.capgemini.gestorproyectos.test.clientes.ClienteTestRequests;
+
+/**
+ * @author vicrodri
+ *
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(
+		locations = {"/conf/spring-test-config.xml","classpath:spring/application-config.xml"})
+@WebAppConfiguration
+public class ArquitecturaControllerTest {
+
+	private EmbeddedDatabase db;
+	
+	@Autowired
+	WebApplicationContext wac;
+	
+	MockMvc mockMvc;
+	
+	@Before
+    public void setUp() {
+		 this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+	}
+	
+	@After
+    public void tearDown() {
+        db.shutdown();
+    }
+
+//	@Test
+//    public void testFindByname() {
+//    	NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(db);
+//    	UserDaoImpl userDao = new UserDaoImpl();
+//    	userDao.setNamedParameterJdbcTemplate(template);
+//    	
+//    	User user = userDao.findByName("mkyong");
+//  
+//    	Assert.assertNotNull(user);
+//    	Assert.assertEquals(1, user.getId().intValue());
+//    	Assert.assertEquals("mkyong", user.getName());
+//    	Assert.assertEquals("mkyong@gmail.com", user.getEmail());
+
+//    } 
+	/**
+	 * Test method for {@link com.capgemini.gestorproyectos.controller.ClienteController#obtenerClientes(com.capgemini.gestorproyectos.model.ClienteDTO)}.
+	 */
+	@Test
+	public final void testObtenerArquitecturas() {
+		try {
+			this.mockMvc.perform(post("/rest/asignacion/obtenerAsignaciones").
+					contentType(MediaType.APPLICATION_JSON).content(ClienteTestRequests.JSON_VACIO)).andExpect(status().isOk()).andDo(print());
+		} catch (Exception e) {
+			fail("Error en el servicio: " + e);
+		}
+	}
+//	/**
+//	 * Test method for {@link com.capgemini.gestorproyectos.controller.ClienteController#obtenerClientes(com.capgemini.gestorproyectos.model.ClienteDTO)}.
+//	 */
+//	@Test
+//	public final void testObtenerArquitecturasFiltros() {
+//		try {
+//			this.mockMvc.perform(post("/rest/cliente/obtenerArq").contentType(MediaType.APPLICATION_JSON)
+//				.content(ClienteTestRequests.JSON_FILTRO_NOMBRE)).andExpect(status().isOk()).andDo(print());
+//			
+//			this.mockMvc.perform(post("/rest/cliente/obtenerArq").contentType(MediaType.APPLICATION_JSON)
+//				.content(ClienteTestRequests.JSON_FILTRO_DESCRIPCION)).andExpect(status().isOk()).andDo(print());
+//			
+//			this.mockMvc.perform(post("/rest/cliente/obtenerArq").contentType(MediaType.APPLICATION_JSON)
+//				.content(ClienteTestRequests.JSON_FILTRO_ID)).andExpect(status().isOk()).andDo(print());
+//		} catch (Exception e) {
+//			fail("Error en el servicio: " + e);
+//		}
+//	}
+//	
+//	/**
+//	 * Test method for {@link com.capgemini.gestorproyectos.controller.ClienteController#crearCliente(com.capgemini.gestorproyectos.model.ClienteDTO)}.
+//	 */
+//	@Test
+//	public final void testCrearArquitectura() {
+//		try {
+//			this.mockMvc.perform(post("/rest/cliente/crearArq").contentType(MediaType.APPLICATION_JSON)
+//				 .content(ClienteTestRequests.JSON_CREAR_CLIENTE)).andExpect(status().isCreated()).andDo(print());
+//		} catch (Exception e) {
+//			fail("Error en el servicio: " + e);
+//		}
+//	}
+//	
+//	/**
+//	 * Test method for {@link com.capgemini.gestorproyectos.controller.ClienteController#crearCliente(com.capgemini.gestorproyectos.model.ClienteDTO)}.
+//	 */
+//	@Test
+//	public final void testValidacionCrearArquitectura() {
+//		try {
+//		 this.mockMvc.perform(post("/rest/cliente/crearArq").contentType(MediaType.APPLICATION_JSON)
+//				 .content(ClienteTestRequests.JSON_CREAR_CLIENTE_VALIDAR)).andExpect(status().isBadRequest()).andDo(print());
+//		} catch (Exception e) {
+//			fail("Error en el servicio: " + e);
+//		}
+//	}
+//
+//	/**
+//	 * Test method for {@link com.capgemini.gestorproyectos.controller.ClienteController#actualizarCliente(com.capgemini.gestorproyectos.model.ClienteDTO)}.
+//	 */
+//	@Test
+//	public final void testActualizarArquitectura() {
+//		try {
+//		 this.mockMvc.perform(put("/rest/cliente/actualizarArq").contentType(MediaType.APPLICATION_JSON)
+//				 .content(ClienteTestRequests.JSON_ACTUALIZAR_CLIENTE)).andExpect(status().isCreated()).andDo(print());
+//		} catch (Exception e) {
+//			fail("Error en el servicio: " + e);
+//		}
+//	}
+//
+//	/**
+//	 * Test method for {@link com.capgemini.gestorproyectos.controller.ClienteController#crearCliente(com.capgemini.gestorproyectos.model.ClienteDTO)}.
+//	 */
+//	@Test
+//	public final void testValidacionActualizarArquitectura() {
+//		try {
+//		 this.mockMvc.perform(put("/rest/cliente/actualizarArq").contentType(MediaType.APPLICATION_JSON)
+//				 .content(ClienteTestRequests.JSON_ACTUALIZAR_CLIENTE_VALIDAR)).andExpect(status().isBadRequest()).andDo(print());
+//		} catch (Exception e) {
+//			fail("Error en el servicio: " + e);
+//		}
+//	}
+//	/**
+//	 * Test method for {@link com.capgemini.gestorproyectos.controller.ClienteController#eliminarCliente(com.capgemini.gestorproyectos.model.ClienteDTO)}.
+//	 */
+//	@Test
+//	public final void testEliminarArquitectura() {
+//		try {
+//		 this.mockMvc.perform(delete("/rest/cliente/eliminarArq").contentType(MediaType.APPLICATION_JSON)
+//				 .content(ClienteTestRequests.JSON_ELIMINAR_CLIENTE)).andExpect(status().isOk()).andDo(print());
+//		} catch (Exception e) {
+//			fail("Error en el servicio: " + e);
+//		}
+//	}
+//
+//	/**
+//	 * Test method for {@link com.capgemini.gestorproyectos.controller.ClienteController#getAllClientes()}.
+//	 * @throws Exception 
+//	 */
+//	@Test
+//	public final void testGetAllArquitecturas() {
+//		try {
+//			this.mockMvc.perform(get("/rest/cliente/getAllArq").
+//				contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andDo(print());
+//		} catch (Exception e) {
+//			fail("Error en el servicio: " + e);
+//		}	
+//	}
+}

@@ -1,0 +1,24 @@
+package com.capgemini.gestorproyectos.dao;
+
+import java.util.List;
+
+import com.capgemini.gestorproyectos.model.GrupoTareaDTO;
+import com.capgemini.gestorproyectos.model.TareaDTO;
+
+/**
+ * DAO para las operaciones de BBDD de la tabla tareas
+ * mapea al fichero TareaMapper.xml
+ * @author capgemini
+ *
+ */
+public interface TareaDAO extends BaseCRUDDAO<TareaDTO> {
+	
+	/**
+	 * Devuelve los registros de la tabla tareas.
+	 * 
+	 * @param grupoTarea <GrupoTareaDTO>
+	 * @return lista de <TareaDTO>
+	 */
+	List<TareaDTO> getTareasGrupo(GrupoTareaDTO grupoTarea);
+	List<TareaDTO> getAllTareas();
+}

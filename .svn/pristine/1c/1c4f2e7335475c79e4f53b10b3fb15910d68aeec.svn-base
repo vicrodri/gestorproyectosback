@@ -1,0 +1,130 @@
+package com.capgemini.gestorproyectos.controller;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.capgemini.gestorproyectos.model.RolDTO;
+import com.capgemini.gestorproyectos.service.RolService;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+
+@Api(value = "RolController", description = "RolController DESC") 
+@Controller
+@RequestMapping("/rest/rol")
+public class RolController extends BaseController{
+	
+	private Logger logger = LoggerFactory.getLogger(RolController.class);
+	
+	@Autowired
+	private RolService service;
+	
+	@ApiOperation(
+		value = "obtenerRoles", 
+		notes="Devuelve una lista de roles",
+		responseClass="List<RolDTO>")
+	@RequestMapping(value="/obtenerRoles", method = RequestMethod.POST)
+	public @ApiResponse(value="Lista de obtenerRoles con los resultados") 
+		ResponseEntity<List<RolDTO>> obtenerRoles(
+			@ApiParam(value = "filtro") @RequestBody RolDTO rol)  throws Exception{
+		logger.info("[INICIO] - obtenerRoles");
+		
+		ResponseEntity<List<RolDTO>> response;
+		List<RolDTO> lista = service.get(rol);
+		response = new ResponseEntity<List<RolDTO>>(lista, HttpStatus.OK);
+
+		logger.info("[FIN] - obtenerRoles");
+		
+		return response;
+	}
+	    
+	@ApiOperation(
+		value = "crearRol", 
+		notes="Añade los datos de un rol en BBDD",
+		responseClass="Rol añadido")
+	@RequestMapping(value="/crearRol", method = RequestMethod.POST)
+	public @ApiResponse(value="Rol Añadido")
+		ResponseEntity<RolDTO> crearRol(
+			@ApiParam(value = "Objeto Rol a añadir, nombre obligatorio") 
+			@Valid @RequestBody RolDTO rol)  throws Exception{
+		logger.info("[INICIO] - crearRol");
+		
+		ResponseEntity<RolDTO> response;
+		RolDTO resultado = service.add(rol);
+		response = new ResponseEntity<RolDTO>(resultado, HttpStatus.CREATED);
+
+		logger.info("[FIN] - crearRol");
+		
+		return response;
+	}
+	
+	@ApiOperation(
+		value = "actualizarRol", 
+		notes="Actualiza los datos de un rol en BBDD",
+		responseClass="datos actualizados")
+	@RequestMapping(value="/actualizarRol", method = RequestMethod.PUT)
+	public  @ApiResponse(value="Rol Actualizado") 
+		ResponseEntity<RolDTO> actualizarRol(
+			@ApiParam(value = "Objeto Rol a actualizar, nombre obligatorio") 
+			@Valid @RequestBody RolDTO rol)  throws Exception{
+		logger.info("[INICIO] - actualizarRol");
+		
+		ResponseEntity<RolDTO> response;
+		RolDTO resultado = service.update(rol);
+		response = new ResponseEntity<RolDTO>(resultado, HttpStatus.CREATED);
+
+		logger.info("[FIN] - actualizarRol");
+		
+		return response;
+	}
+	@ApiOperation(
+		value = "eliminarRol", 
+		notes="Elimina los datos de un rol en BBDD",
+		responseClass="flag borrado correcto")
+	@RequestMapping(value="/eliminarRol", method = RequestMethod.DELETE)
+	public @ApiResponse(value="Flag Borrado") 
+		ResponseEntity<Boolean> eliminarRol(
+			@ApiParam(value = "Objeto Rol a eliminar") 
+			@RequestBody RolDTO rol) throws Exception{
+		logger.info("[INICIO] - eliminarRol");
+		
+		ResponseEntity<Boolean> response;
+		Boolean resultado = Boolean.FALSE;
+		resultado = service.delete(rol);
+		response = new ResponseEntity<Boolean>(resultado, HttpStatus.OK);
+		
+		logger.info("[FIN] - eliminarRol");
+		
+		return response;
+	}
+
+	@ApiOperation(
+		value = "getAllRoles", 
+		notes="Devuelve todos lo roles",
+		responseClass="List<RolDTO>")
+	@RequestMapping(value="/getAllRoles", method = RequestMethod.GET)
+	public @ApiResponse(value="Lista de roles con los resultados") 
+		ResponseEntity<List<RolDTO>> obtenerRoles()  throws Exception{
+		logger.info("[INICIO] - getAllRoles");
+		
+		ResponseEntity<List<RolDTO>> response;
+		List<RolDTO> lista = service.getAllRoles();
+		response = new ResponseEntity<List<RolDTO>>(lista, HttpStatus.OK);
+
+		logger.info("[FIN] - getAllRoles");
+		
+		return response;
+	}
+}

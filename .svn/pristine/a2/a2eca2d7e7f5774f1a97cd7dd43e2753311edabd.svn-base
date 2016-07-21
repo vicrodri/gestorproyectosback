@@ -1,0 +1,143 @@
+package com.capgemini.gestorproyectos.controller;
+
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.capgemini.gestorproyectos.exceptions.GestorProyectosException;
+import com.capgemini.gestorproyectos.model.AsignacionDTO;
+import com.capgemini.gestorproyectos.service.AsignacionService;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+
+@Api(value = "AsignacionController", description = "AsignacionController DESC") 
+@Controller
+@RequestMapping("/rest/asignacion")
+public class AsignacionController extends BaseController{
+	
+	private Logger logger = LoggerFactory.getLogger(AsignacionController.class);
+	
+	@Autowired
+	private AsignacionService service;
+	
+	@ApiOperation(
+		value = "obtenerAsignaciones", 
+		notes="Devuelve una lista de Asignaciones en función del filtro pasado como parámetro",
+		responseClass="List<AsignacionDTO>")
+	@RequestMapping(value="/obtenerAsignaciones", method = RequestMethod.POST)
+	public @ApiResponse(value="Lista de asignaciones con los resultados") 
+		ResponseEntity<List<AsignacionDTO>> obtenerAsignaciones(
+		@ApiParam(value = "Objeto Asignacion con el filtro a aplicar") 
+		@RequestBody AsignacionDTO asignacion)  throws Exception{
+		logger.info("[INICIO] - obtenerAsignaciones");
+		
+		ResponseEntity<List<AsignacionDTO>> response;
+		List<AsignacionDTO> lista = null;
+		lista = service.getAsignaciones(asignacion);
+		response = new ResponseEntity<List<AsignacionDTO>>(lista, HttpStatus.OK);
+
+		logger.info("[FIN] - obtenerAsignaciones");
+		
+		return response;
+	}
+	    
+	@ApiOperation(
+		value = "crearAsignacion", 
+		notes="Añade los datos de una asignacion en BBDD",
+		responseClass="Asignacion añadida")
+	@RequestMapping(value="/crearAsignacion", method = RequestMethod.POST)
+	public @ApiResponse(value="Asignacion Añadida")
+		ResponseEntity<AsignacionDTO> crearAsignacion(
+			@ApiParam(value = "Objeto Asignacion a añadir - proyecto, persona, rol y la fecha de inicio son obligatorios") 
+			@Valid @RequestBody AsignacionDTO asignacion)  throws Exception{
+		logger.info("[INICIO] - crearAsignacion");
+		
+		if (!this.validarEntrada(asignacion)) {
+			throw new GestorProyectosException("888","El proyecto, persona, rol y la fecha de inicio son obligatorios");
+		}
+		
+		ResponseEntity<AsignacionDTO> response;
+		AsignacionDTO resultado = service.addAsignacion(asignacion);
+		response = new ResponseEntity<AsignacionDTO>(resultado, HttpStatus.CREATED);
+
+		logger.info("[FIN] - crearAsignacion");
+		
+		return response;
+	}
+	
+	@ApiOperation(
+		value = "actualizarAsignacion", 
+		notes="Actualiza los datos de una asignacion en BBDD",
+		responseClass="datos actualizados")
+	@RequestMapping(value="/actualizarAsignacion", method = RequestMethod.PUT)
+	public  @ApiResponse(value="Asignacion Actualizada") 
+		ResponseEntity<AsignacionDTO> actualizarAsignacion(
+			@ApiParam(value = "Objeto Asignacion a añadir - proyecto, persona, rol y la fecha de inicio son obligatorios") 
+			@Valid @RequestBody AsignacionDTO asignacion)  throws Exception{
+		logger.info("[INICIO] - actualizarAsignacion");
+		
+		if (!this.validarEntrada(asignacion)) {
+			throw new GestorProyectosException("888","El proyecto, persona, rol y la fecha de inicio son obligatorios");
+		}
+		
+		ResponseEntity<AsignacionDTO> response;
+		AsignacionDTO resultado = service.updateAsignacion(asignacion);
+		response = new ResponseEntity<AsignacionDTO>(resultado, HttpStatus.CREATED);
+
+		logger.info("[FIN] - actualizarAsignacion");
+		
+		return response;
+	}
+	
+	@ApiOperation(
+		value = "eliminarAsignacion", 
+		notes="Elimina los datos de una asignacion en BBDD",
+		responseClass="flag borrado correcto")
+	@RequestMapping(value="/eliminarAsignacion", method = RequestMethod.DELETE)
+	public @ApiResponse(value="Flag Borrado") 
+		ResponseEntity<Boolean> eliminarAsignacion(
+			@ApiParam(value = "Objeto Asignacion a eliminar") 
+			@RequestBody AsignacionDTO asignacion) throws Exception{
+		logger.info("[INICIO] - eliminarAsignacion");
+		
+		ResponseEntity<Boolean> response;
+		Boolean resultado = Boolean.FALSE;
+		resultado = service.deleteAsignacion(asignacion);
+		response = new ResponseEntity<Boolean>(resultado, HttpStatus.OK);
+		
+		logger.info("[FIN] - eliminarAsignacion");
+		
+		return response;
+	}
+
+	/**
+	 * Validacion de entrada
+	 * 
+	 * @param asignacion
+	 * @return
+	 * @throws Exception
+	 */
+	private Boolean validarEntrada(AsignacionDTO asignacion) throws Exception{
+		if (asignacion.getPersona() != null && asignacion.getProyecto() != null && 
+			asignacion.getRol() != null) {
+			if (asignacion.getPersona().getId() != null && 
+				asignacion.getProyecto().getId() != null && 
+				asignacion.getRol().getId() != null) {
+				return Boolean.TRUE;
+			}
+		}
+		return Boolean.FALSE;
+	}
+}

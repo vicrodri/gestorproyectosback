@@ -1,0 +1,55 @@
+package com.capgemini.gestorproyectos.service.impl;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.capgemini.gestorproyectos.dao.ProyectoDAO;
+import com.capgemini.gestorproyectos.exceptions.GestorProyectosException;
+import com.capgemini.gestorproyectos.model.ClienteDTO;
+import com.capgemini.gestorproyectos.model.ProyectoDTO;
+import com.capgemini.gestorproyectos.service.ProyectoService;
+
+@Service
+public class ProyectoServiceImpl implements ProyectoService{
+
+	@Autowired
+	private ProyectoDAO proyectoDAO;
+	
+	private Logger logger = LoggerFactory.getLogger(ProyectoServiceImpl.class);
+	
+	public List<ProyectoDTO> get(ProyectoDTO proyecto) throws Exception {
+		logger.debug("[INICIO] - getProyectos - Filtro: - " + proyecto.toString());
+		return this.proyectoDAO.get(proyecto);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public ProyectoDTO add(ProyectoDTO proyecto) throws Exception {
+		logger.debug("[INICIO] - addProyecto - Proyecto: - " + proyecto.toString());
+		this.proyectoDAO.add(proyecto);
+		return proyecto;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	public ProyectoDTO update(ProyectoDTO proyecto) throws Exception {
+		logger.debug("[INICIO] - updateProyecto - Proyecto: - " + proyecto.toString());
+		if (this.proyectoDAO.update(proyecto) == 0) {
+			throw new GestorProyectosException("000", "El registro a actualizar no existe");
+		}
+		return proyecto;
+	}
+
+	public List<ProyectoDTO> getProyectosCliente(ClienteDTO cliente) {
+		logger.debug("[INICIO] - getProyectosCliente - Filtro: - " + cliente.toString());
+		return this.proyectoDAO.getProyectosCliente(cliente);
+	}
+
+	public Boolean delete(ProyectoDTO cliente) throws Exception {
+		return null;
+	}
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.capgemini.gestorproyectos.dao.FuncionalidadesDAO">
+	<resultMap type="com.capgemini.gestorproyectos.model.FuncionalidadesDTO" id="funcionalidadMap">
+	  <id column="idFuncionalidad" property="id" javaType="long"/>
+	  <result column="nombre" property="nombre" javaType="string"/>
+	   <result column="descripcion" property="descripcion" javaType="string"/>
+	  <association property="proyecto" javaType="com.capgemini.gestorproyectos.model.ProyectoDTO" >
+      <id column="idProyecto" property="id" javaType="long"/>
+      <result column="nombre" property="nombre" javaType="string"/>
+      <result column="descripcion" property="descripcion" javaType="string"/>
+      </association>
+
+        <association property="entrega" javaType="com.capgemini.gestorproyectos.model.EntregaDTO" >
+        
+      <id column="idEntrega" property="idEntrega" javaType="int"/>
+      <result column="comentarios" property="comentarios" javaType="string"></result>
+      </association>
+  
+	</resultMap>
+	
+	<select id="getAllFuncionalidades" resultMap="funcionalidadMap">
+    select * from funcionalidades
+    </select>
+    
+    <select id="get" resultMap="funcionalidadMap" parameterType="com.capgemini.gestorproyectos.model.FuncionalidadesDTO">
+    <if test="nombre!=null">
+    <bind name="patronNombre" value="'%' + _parameter.getNombre() + '%'" />
+    </if> 
+    select * from funcionalidades
+    where nombre like #{patronNombre}
+    
+    
+    </select>
+    
+    <update id="update" parameterType="com.capgemini.gestorproyectos.model.FuncionalidadesDTO">
+    update funcionalidades
+    <set>
+    <if test="nombre!=null">
+     nombre=#{nombre},
+    </if>
+    <if test="proyecto!=null">
+    idProyecto=#{proyecto.id},
+    </if>
+    <if test="entrega!=null">
+    idEntrega=#{entrega.idEntrega},
+    </if>
+    <if test="descripcion!=null">
+    descripcion=#{descripcion},
+    </if>
+    <if test="grupoTarea!=null">
+    idGrupoTarea=#{grupoTarea.id}
+    </if>
+    </set>
+   where idFuncionalidad=#{id}
+    
+    </update>
+    <delete id="delete" parameterType="com.capgemini.gestorproyectos.model.FuncionalidadesDTO">
+    	delete from funcionalidades where id=#{id}
+    </delete>
+    <insert id="add" parameterType="com.capgemini.gestorproyectos.model.FuncionalidadesDTO" useGeneratedKeys="true" keyProperty="idFuncionalidad">
+    insert into funcionalidades(nombre,idProyecto,idEntrega,descripcion,idGrupoTarea)
+    values(#{nombre},#{proyecto.id},#{entrega.idEntrega},#{descripcion},#{grupoTarea.id})
+    
+    </insert>
+</mapper>

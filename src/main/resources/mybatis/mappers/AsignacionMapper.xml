@@ -1,0 +1,113 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.capgemini.gestorproyectos.dao.AsignacionDAO">
+  
+	<resultMap type="com.capgemini.gestorproyectos.model.AsignacionDTO" id="asignacionMap">
+	  <id column="idAsignacion" property="id" javaType="long"/>
+	  <result column="fechaInicio" property="fechaInicio" javaType="date"/>
+    <result column="fechaFin" property="fechaFin" javaType="date"/>
+    <result column="inactivo" property="inactivo" javaType="boolean"/>
+    <association property="proyecto" javaType="com.capgemini.gestorproyectos.model.ProyectoDTO" >
+      <id column="idProyecto" property="id" javaType="long"/>
+      <result column="nomProy" property="nombre" javaType="string"/>
+      <result column="descProy" property="descripcion" javaType="string"/>
+	    <association property="cliente" javaType="com.capgemini.gestorproyectos.model.ClienteDTO" >
+	      <id column="idCliente" property="id" javaType="long"/>
+	      <result column="nomCli" property="nombre" javaType="string"/>
+	      <result column="descCli" property="descripcion" javaType="string"/>
+      </association>
+    </association>
+    <association property="persona" javaType="com.capgemini.gestorproyectos.model.PersonaDTO" >
+      <id column="idPersona" property="id" javaType="long"/>
+      <result column="nomPers" property="nombre" javaType="string"/>
+      <result column="apellido1" property="primerApellido" javaType="string"/>
+      <result column="apellido2" property="segundoApellido" javaType="string"/>
+    </association>
+    <association property="rol" javaType="com.capgemini.gestorproyectos.model.RolDTO" >
+      <id column="idRol" property="id" javaType="long"/>
+      <result column="nomRol" property="nombre" javaType="string"/>
+    </association>
+	</resultMap>
+  
+  <resultMap type="com.capgemini.gestorproyectos.model.AsignacionDTO" id="asignacionSimpleMap">
+    <id column="idAsignacion" property="id" javaType="long"/>
+    <result column="fechaInicio" property="fechaInicio" javaType="date"/>
+    <result column="fechaFin" property="fechaFin" javaType="date"/>
+    <result column="inactivo" property="inactivo" javaType="boolean"/>
+  </resultMap>
+  
+  <select id="get" resultMap="asignacionMap" 
+    parameterType="com.capgemini.gestorproyectos.model.AsignacionDTO">
+    select asig.idAsignacion, asig.fechaInicio, asig.fechaFin, asig.inactivo,
+		roles.idRol, roles.nombre as nomRol, pers.idPersona, pers.nombre as nomPers, 
+		pers.apellido1, pers.apellido2, proy.idProyecto, proy.descripcion as descProy, 
+		proy.nombre as nomProy, cli.idCliente, cli.nombre as nomCli, cli.descripcion as descCli
+		from asignacion asig, roles, personas pers, 
+		proyectos proy left join clientes cli on proy.idCliente = cli.idCliente
+		where asig.idRol = roles.idRol and asig.idPersona = pers.idPersona and
+		asig.idProyecto = proy.idProyecto
+    <choose>
+       <when test="id!=null">
+         and asig.idAsignacion = #{id}
+       </when>
+       <when test="proyecto!=null or persona!=null or rol!=null">
+         <if test="proyecto.cliente!=null and proyecto.cliente.id!=null">and cli.idCliente=#{proyecto.cliente.id}</if>
+         <if test="proyecto.id!=null">and proy.idProyecto like #{proyecto.id}</if>
+         <if test="persona.id!=null">and pers.idPersona like #{persona.id}</if>
+         <if test="rol.id!=null">and roles.idRol like #{rol.id}</if>
+      </when>
+    </choose>
+    order by asig.idAsignacion
+  </select>
+  
+  <insert id="add" parameterType="com.capgemini.gestorproyectos.model.AsignacionDTO"   
+    useGeneratedKeys="true" keyProperty="id">
+    insert into asignacion (
+      idProyecto,
+      idPersona,
+      idRol,
+      fechaInicio,
+      fechaFin,
+      inactivo
+    )
+    values (
+      #{proyecto.id},
+      #{persona.id},
+      #{rol.id},
+      #{fechaInicio},
+      #{fechaFin},
+      0
+    )
+  </insert>
+  
+  <update id="update" parameterType="com.capgemini.gestorproyectos.model.AsignacionDTO">
+    update asignacion set
+      <if test='proyecto != null and proyecto.id!=null'>
+        idProyecto=#{proyecto.id},
+      </if>
+       <if test='persona!=null and persona.id!=null'>
+        idPersona=#{persona.id},
+      </if>
+       <if test='rol!=null and rol.id!=null'>
+        idRol=#{rol.id},
+      </if>
+      <if test='fechaInicio!=null'>
+        fechaInicio=#{fechaInicio},
+      </if>
+      <if test='fechaFin!=null'>
+        fechaFin=#{fechaFin},
+      </if>
+      <if test='inactivo!=null'>
+        inactivo=#{inactivo}
+      </if>
+    where idAsignacion = #{id}
+  </update>
+  
+  <delete id="delete" parameterType="com.capgemini.gestorproyectos.model.AsignacionDTO">
+    delete from asignacion where idAsignacion = #{id}
+  </delete> 
+    
+  <select id="getAsignacionesRol" resultMap="asignacionSimpleMap"
+    parameterType="com.capgemini.gestorproyectos.model.RolDTO">
+    select * from asignacion where idRol = #{id}
+  </select>
+</mapper>
